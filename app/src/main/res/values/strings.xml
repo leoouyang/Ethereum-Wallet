@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">EthereumWallet</string>
+
+    <string name="back_button_reminder">再按一次退出应用</string>
+
+    <string name="approx_equal">≈</string>
+
+    <string name="total_asset">总资产（¥）</string>
+
+    <string name="create_new_wallet">创建钱包</string>
+
+    <string name="scanQR">扫一扫</string>
+
+    <string name="asset">资产</string>
+
+    <string name="price">行情</string>
+
+    <string name="me">我</string>
+</resources>
