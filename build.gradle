@@ -18,7 +18,9 @@ buildscript {
 allprojects {
     repositories {
         google()
+        mavenCentral()
         jcenter()
+        maven { url "https://dl.bintray.com/ethereum/maven/" }
     }
 }
 
