@@ -13,7 +13,7 @@
         android:layout_gravity="center_horizontal">
 
         <TextView
-            android:id="@+id/asset_publicKey"
+            android:id="@+id/asset_full_address"
             android:textColor="#fff"
             android:layout_width="180dp"
             android:layout_height="wrap_content"

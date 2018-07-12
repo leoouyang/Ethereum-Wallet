@@ -74,17 +74,20 @@ public class MainActivity extends AppCompatActivity {
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
-//        replaceFragment(assetFragment);
+//        Account account = new Account();
+//        account.setAddress("0x8E647387434cac6cAC3DCFc5170f946e10DA57B0");
+//        account.setPrivateKey("47cdb88b969767933348d2550f0516a601151158c300d34b1cb6902d5471d873");
+//        account.setUsername("ouyang");
+//        AccountUtil.accounts.add(account);
+//        Account account2 = new Account();
+//        account2.setAddress("0x9b3aFF61a18C117257Ce1f6CAF6Ad69eE7A0189B");
+//        account2.setPrivateKey("91457d7f2c42885b1d23e171ae20424e7916e21e252c98c27d0b957701f435e6");
+//        account2.setUsername("awepofnawefo");
+//        AccountUtil.accounts.add(account2);
+//        AccountUtil.saveAccounts(this);
+        AccountUtil.loadAccounts(this);
         initFragment();
     }
-
-//    private void replaceFragment(Fragment fragment){
-//        FragmentManager fragmentManager = this.getSupportFragmentManager();
-//        FragmentTransaction transaction = fragmentManager.beginTransaction();
-//        transaction.replace(R.id.main_view, fragment);
-////        transaction.addToBackStack(null);
-//        transaction.commit();
-//    }
 
     private void initFragment(){
         FragmentManager fragmentManager = MainActivity.this.getSupportFragmentManager();
@@ -111,5 +114,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    protected void onDestroy() {
+//        Web3jUtil.web3.shutdown();
+        AccountUtil.saveAccounts(this);
+        super.onDestroy();
+    }
 }

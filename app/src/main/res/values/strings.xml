@@ -5,6 +5,8 @@
 
     <string name="approx_equal">≈</string>
 
+    <string name="dollar_sign">¥</string>
+
     <string name="total_asset">总资产（¥）</string>
 
     <string name="create_new_wallet">创建钱包</string>
@@ -16,4 +18,8 @@
     <string name="price">行情</string>
 
     <string name="me">我</string>
+
+    <string name="eth">ETH</string>
+
+    <string name="selfcoin">BLOC</string>
 </resources>

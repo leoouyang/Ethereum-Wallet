@@ -8,6 +8,7 @@
     android:id="@+id/asset_drawer_layout">
 
     <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/asset_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
@@ -47,7 +48,6 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_margin="5dp"
-                        android:text="ouyang"
                         android:textColor="#fff"
                         android:textSize="25sp" />
 
@@ -60,10 +60,9 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/asset_publicKey"
+                            android:id="@+id/asset_address"
                             android:layout_width="180dp"
                             android:layout_height="wrap_content"
-                            android:text="0x8E647387...6e10DA57B0"
                             android:textColor="#fff" />
 
                         <ImageView
@@ -90,10 +89,9 @@
                             android:textSize="25sp" />
 
                         <TextView
-                            android:id="@+id/approx_value_in_cny"
+                            android:id="@+id/asset_total_real"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="10000000"
                             android:textColor="#fff"
                             android:textSize="45sp" />
                     </LinearLayout>
@@ -116,20 +114,204 @@
                     android:background="@drawable/ic_asset_menu" />
 
             </FrameLayout>
-            <ListView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
 
-            </ListView>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/asset_eth_image"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:src="@drawable/js_images_asset_eth"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/asset_eth_image"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:textSize="30sp"
+                    android:text="@string/eth"/>
+
+                <TextView
+                    android:id="@+id/asset_eth_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:textSize="30sp"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_below="@id/asset_eth_amount"
+                    android:layout_alignRight="@id/asset_eth_amount">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:layout_marginRight="3dp"
+                        android:text="@string/approx_equal"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="3dp"
+                        android:textSize="16sp"
+                        android:text="@string/dollar_sign"/>
+
+                    <TextView
+                        android:id="@+id/asset_eth_amount_real"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"/>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/asset_selfCoin_image"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:src="@drawable/js_images_asset_augur"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/asset_selfCoin_image"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:textSize="30sp"
+                    android:text="@string/selfcoin"/>
+
+                <TextView
+                    android:id="@+id/asset_selfCoin_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="15dp"
+                    android:textSize="30sp"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_below="@id/asset_selfCoin_amount"
+                    android:layout_alignRight="@id/asset_selfCoin_amount">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:layout_marginRight="3dp"
+                        android:text="@string/approx_equal"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="3dp"
+                        android:textSize="16sp"
+                        android:text="@string/dollar_sign"/>
+
+                    <TextView
+                        android:id="@+id/asset_selfCoin_amount_real"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"/>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
         </LinearLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
     
-    <android.support.design.widget.NavigationView
-        android:id="@+id/asset_side_nav"
+    <!--<android.support.design.widget.NavigationView-->
+        <!--android:id="@+id/asset_side_nav"-->
+        <!--android:layout_gravity = "left"-->
+        <!--app:menu="@menu/side_nav"-->
+        <!--app:headerLayout="@layout/asset_side_nav_header"-->
+        <!--android:layout_width="250dp"-->
+        <!--android:layout_height="match_parent"/>-->
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:background="#FFF"
         android:layout_gravity = "left"
-        app:menu="@menu/side_nav"
-        app:headerLayout="@layout/asset_side_nav_header"
         android:layout_width="250dp"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_marginTop="30dp"
+            android:id="@+id/asset_side_nav_accounts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </android.support.v7.widget.RecyclerView>
+
+        <LinearLayout
+            android:background="#d4d4d4"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="10dp"/>
+
+        <LinearLayout
+            android:id="@+id/asset_side_nav_scanQR"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_marginLeft="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_asset_scan"/>
+
+            <TextView
+                android:layout_margin="15dp"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/scanQR"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/asset_side_nav_create_account"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_marginLeft="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_asset_create_wallet"/>
+
+            <TextView
+                android:layout_margin="15dp"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/create_new_wallet"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>
