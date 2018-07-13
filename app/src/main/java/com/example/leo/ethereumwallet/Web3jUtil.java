@@ -22,6 +22,7 @@ public class Web3jUtil {
     private static final BigDecimal ETHER2WEI = new BigDecimal(Math.pow(10,18));
     private static final String TAG = "Web3jUtil";
     private static final Web3j web3 = Web3jFactory.build(new HttpService(INFURA_ADDRESS + INFURA_TOKEN));
+
     public static double getEtherBalance(String address){
 
         try{

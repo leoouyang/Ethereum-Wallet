@@ -49,7 +49,7 @@ public class SideAccountAdapter extends RecyclerView.Adapter {
                 curIndex = holder.getAdapterPosition();
                 notifyItemChanged(curIndex);
                 assetFragment.refreshDisplay(curIndex);
-                assetFragment.refreshAccount(curIndex);
+                new RefreshTask(curIndex, assetFragment).execute();
             }
         });
         return holder;

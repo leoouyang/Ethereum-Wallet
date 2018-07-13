@@ -17,6 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 //import org.ethereum.crypto.ECKey;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import org.spongycastle.util.encoders.Hex;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
@@ -29,8 +31,8 @@ import java.util.concurrent.TimeoutException;
 public class AssetFragment extends Fragment implements View.OnClickListener{
     private static final String TAG = "AssetFragment";
 
-    private DrawerLayout drawerLayout;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    protected DrawerLayout drawerLayout;
+    protected SwipeRefreshLayout swipeRefreshLayout;
 
     private Button menuButton;
     private LinearLayout createAccountLayout;
@@ -64,7 +66,8 @@ public class AssetFragment extends Fragment implements View.OnClickListener{
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refreshAccount(curAccountIndex);
+                new RefreshTask(curAccountIndex, AssetFragment.this).execute();
+//                refreshAccount(curAccountIndex);
             }
         });
 
@@ -130,68 +133,62 @@ public class AssetFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    protected void refreshAccount(final int i){
-        drawerLayout.closeDrawer(Gravity.LEFT);
-        swipeRefreshLayout.setRefreshing(true);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-//                try{
-//
-//                    Thread.sleep(1000);
-//                }catch (Exception e){
-//                    e.printStackTrace();
+//    protected void refreshAccount(final int i){
+//        drawerLayout.closeDrawer(Gravity.LEFT);
+//        swipeRefreshLayout.setRefreshing(true);
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+////                try{
+////
+////                    Thread.sleep(1000);
+////                }catch (Exception e){
+////                    e.printStackTrace();
+////                }
+//                Account curAccount = AccountUtil.accounts.get(i);
+//                double ethAmount = Web3jUtil.getEtherBalance(curAccount.getAddress());
+//                if (ethAmount >= 0) {
+//                    curAccount.setEthereum(ethAmount);
+//                    refreshDisplay(i);
+//                } else {
+//                    AssetFragment.this.getActivity().runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            Toast.makeText(AssetFragment.this.getActivity(), "Failed to Refresh", Toast.LENGTH_SHORT).show();
+//                            Log.d(TAG, "refreshAccount: Failed");
+//                        }
+//                    });
 //                }
-                Account curAccount = AccountUtil.accounts.get(i);
-                double ethAmount = Web3jUtil.getEtherBalance(curAccount.getAddress());
-                if (ethAmount >= 0) {
-                    curAccount.setEthereum(ethAmount);
-                    refreshDisplay(i);
-                } else {
-                    AssetFragment.this.getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(AssetFragment.this.getActivity(), "Failed to Refresh", Toast.LENGTH_SHORT).show();
-                            Log.d(TAG, "refreshAccount: Failed");
-                        }
-                    });
-                }
-            }
-         }).start();
-    }
+//            }
+//        }).start();
+//    }
 
-    protected void refreshDisplay(int input_i){
-        final int i;
-        if (input_i > AccountUtil.accounts.size()){
+    protected void refreshDisplay(int i){
+        if (i > AccountUtil.accounts.size()){
             i = 0;
-        }else{
-            i = input_i;
         }
-        this.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                curAccountIndex = i;
-                final Account curAccount = AccountUtil.accounts.get(i);
-                usernameView.setText(curAccount.getUsername());
-                String address = curAccount.getAddress();
-                if (address.length() == 42){
-                    String address_brief = address.substring(0,10) + "..." + address.substring(32,42);
-                    addressView.setText(address_brief);
-                }
+        curAccountIndex = i;
+        Account curAccount = AccountUtil.accounts.get(i);
+        usernameView.setText(curAccount.getUsername());
+        String address = curAccount.getAddress();
+        if (address.length() == 42){
+            String address_brief = address.substring(0,10) + "..." + address.substring(32,42);
+            addressView.setText(address_brief);
+        }else{
+            Toast.makeText(this.getActivity(), "The format of address is incorrect", Toast.LENGTH_SHORT).show();
+        }
 
-                double realETH = curAccount.getEthereum() * 2901.20;
-                double realselfCoin = curAccount.getSelfCoin() * 0.05;
+        double realETH = curAccount.getEthereum() * 2901.20;
+        double realselfCoin = curAccount.getSelfCoin() * 0.05;
 
-                realTotalView.setText(String.format(Locale.CHINA,"%.2f", realETH+realselfCoin));
+        realTotalView.setText(String.format(Locale.CHINA,"%.2f", realETH+realselfCoin));
 
-                ETHView.setText(String.format(Locale.CHINA,"%.2f", curAccount.getEthereum()));
-                realETHView.setText(String.format(Locale.CHINA,"%.2f", realETH));
-                SelfCoinView.setText(String.format(Locale.CHINA,"%.2f", curAccount.getSelfCoin()));
-                realSelfCoinView.setText(String.format(Locale.CHINA,"%.2f", realselfCoin));
+        ETHView.setText(String.format(Locale.CHINA,"%.2f", curAccount.getEthereum()));
+        realETHView.setText(String.format(Locale.CHINA,"%.2f", realETH));
+        SelfCoinView.setText(String.format(Locale.CHINA,"%.2f", curAccount.getSelfCoin()));
+        realSelfCoinView.setText(String.format(Locale.CHINA,"%.2f", realselfCoin));
 
 
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
+        swipeRefreshLayout.setRefreshing(false);
     }
 }
