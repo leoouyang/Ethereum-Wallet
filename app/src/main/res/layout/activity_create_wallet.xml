@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:orientation="vertical"
+    tools:context=".CreateWalletActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize">
+
+        <ImageView
+            android:id="@+id/create_wallet_return"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:paddingLeft="15dp"
+            android:src="@drawable/ic_back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/create_new_wallet"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="#d4d4d4" />
+
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/create_wallet_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:hint="@string/wallet_name" />
+
+    <EditText
+        android:id="@+id/create_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:hint="@string/password"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/create_password_doublecheck"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:hint="@string/repeat_password"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/create_wallet_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:background="@color/colorPrimary"
+        android:padding="5dp"
+        android:text="@string/create_new_wallet"
+        android:textColor="#fff"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/create_to_import_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="15dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:text="@string/import_wallet"
+        android:textColor="@color/colorPrimary" />
+
+</LinearLayout>

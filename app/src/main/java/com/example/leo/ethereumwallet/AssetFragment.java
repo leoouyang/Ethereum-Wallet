@@ -16,25 +16,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import org.ethereum.crypto.ECKey;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import org.spongycastle.util.encoders.Hex;
-import org.web3j.protocol.Web3j;
-import org.web3j.protocol.Web3jFactory;
-import org.web3j.protocol.http.HttpService;
-
 import java.util.Locale;
-import java.util.concurrent.TimeoutException;
+
+//import org.ethereum.crypto.ECKey;
 
 
-public class AssetFragment extends Fragment implements View.OnClickListener{
+public class AssetFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "AssetFragment";
 
     protected DrawerLayout drawerLayout;
     protected SwipeRefreshLayout swipeRefreshLayout;
 
-    private Button menuButton;
+    protected Button menuButton;
+    private RecyclerView recyclerView;
     private LinearLayout createAccountLayout;
 
     private TextView usernameView;
@@ -47,8 +41,6 @@ public class AssetFragment extends Fragment implements View.OnClickListener{
     private TextView SelfCoinView;
     private TextView realSelfCoinView;
 
-
-    private int curAccountIndex;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,19 +55,13 @@ public class AssetFragment extends Fragment implements View.OnClickListener{
         drawerLayout = view.findViewById(R.id.asset_drawer_layout);
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         swipeRefreshLayout = view.findViewById(R.id.asset_swipe_refresh);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new RefreshTask(curAccountIndex, AssetFragment.this).execute();
-//                refreshAccount(curAccountIndex);
-            }
-        });
 
         menuButton = view.findViewById(R.id.asset_menu);
         menuButton.setOnClickListener(this);
-        RecyclerView recyclerView = view.findViewById(R.id.asset_side_nav_accounts);
+        recyclerView = view.findViewById(R.id.asset_side_nav_accounts);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
         recyclerView.setAdapter(new SideAccountAdapter(this));
+        recyclerView.getAdapter().notifyDataSetChanged();
         createAccountLayout = view.findViewById(R.id.asset_side_nav_create_account);
         createAccountLayout.setOnClickListener(this);
 
@@ -91,9 +77,21 @@ public class AssetFragment extends Fragment implements View.OnClickListener{
         SelfCoinView = view.findViewById(R.id.asset_selfCoin_amount);
         realSelfCoinView = view.findViewById(R.id.asset_selfCoin_amount_real);
 
-        if (AccountUtil.accounts.size() > 0){
-            refreshDisplay(0);
-        }else{
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+//                AssetFragment.this.getActivity().getWindow().setFlags(
+//                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                new RefreshTask(AssetFragment.this).execute();
+//                refreshAccount(curAccountIndex);
+            }
+        });
+
+        if (AccountManager.getAccountSize() > 0) {
+            AccountManager.setCurAccountIndex(0);
+            refreshDisplay();
+            new RefreshTask(this).execute();
+        } else {
             Log.d(TAG, "onCreateView: Empty accounts list");
         }
         return view;
@@ -101,35 +99,36 @@ public class AssetFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.asset_menu:
-                drawerLayout.openDrawer(Gravity.LEFT);
-                break;
-            case R.id.asset_receive_layout:
-                ReceivePaymentActivity.actionStart(AssetFragment.this.getActivity(),
-                        AccountUtil.accounts.get(curAccountIndex).getAddress());
-                break;
-//            case R.id.asset_side_nav_create_account:
-//                ECKey key = new ECKey();
+        if (!swipeRefreshLayout.isRefreshing()) {
+
+            switch (view.getId()) {
+                case R.id.asset_menu:
+                    drawerLayout.openDrawer(Gravity.LEFT);
+                    break;
+                case R.id.asset_receive_layout:
+                    ReceivePaymentActivity.actionStart(AssetFragment.this.getActivity(),
+                            AccountManager.getCurrentAccount().getAddress());
+                    break;
+                case R.id.asset_side_nav_create_account:
+                    CreateWalletActivity.actionStart(this.getActivity());
+                    break;
+//                try{
+//                    String fileName = this.getActivity().getFilesDir().getAbsolutePath() + "/" + AccountManager.accounts.get(curAccountIndex).getUsername();
+//                    Log.d(TAG, "onClick: " + fileName);
+//                    File outDir = new File(fileName);
+//                    if (!outDir.exists()){
+//                        outDir.mkdir();
+//                    }
+//                    ECKeyPair keyPair = ECKeyPair.create(new BigInteger(AccountManager.accounts.get(curAccountIndex).getPrivateKey(),16));
+//                    WalletUtils.generateWalletFile("ouyang.823", keyPair, outDir, true);
 //
-//                byte[] addr = key.getAddress();
-//                byte[] priv = key.getPrivKeyBytes();
-//
-//                String addrBase16 = Hex.toHexString(addr);
-//                String privBase16 = Hex.toHexString(priv);
-//                Account newAccount = new Account();
-//                newAccount.setUsername("testAccount");
-//                newAccount.setPrivateKey(privBase16);
-//                newAccount.setAddress(addrBase16);
-//                AccountUtil.accounts.add(newAccount);
-//                AccountUtil.saveAccounts(this.getActivity());
-//                Log.d(TAG, addrBase16);
-//                Log.d(TAG, privBase16);
-//                Toast.makeText(this.getActivity(),"new account Created", Toast.LENGTH_LONG).show();
-//                refreshDisplay(AccountUtil.accounts.size()-1);
-//                break;
-            default:
-                break;
+////                    WalletUtils.generateFullNewWalletFile("123456", outDir);
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//                }
+                default:
+                    break;
+            }
         }
     }
 
@@ -145,8 +144,8 @@ public class AssetFragment extends Fragment implements View.OnClickListener{
 ////                }catch (Exception e){
 ////                    e.printStackTrace();
 ////                }
-//                Account curAccount = AccountUtil.accounts.get(i);
-//                double ethAmount = Web3jUtil.getEtherBalance(curAccount.getAddress());
+//                Account curAccount = AccountManager.accounts.get(i);
+//                double ethAmount = Utility.getEtherBalance(curAccount.getAddress());
 //                if (ethAmount >= 0) {
 //                    curAccount.setEthereum(ethAmount);
 //                    refreshDisplay(i);
@@ -163,31 +162,32 @@ public class AssetFragment extends Fragment implements View.OnClickListener{
 //        }).start();
 //    }
 
-    protected void refreshDisplay(int i){
-        if (i > AccountUtil.accounts.size()){
-            i = 0;
-        }
-        curAccountIndex = i;
-        Account curAccount = AccountUtil.accounts.get(i);
+    @Override
+    public void onResume() {
+        super.onResume();
+        recyclerView.getAdapter().notifyDataSetChanged();
+    }
+
+    protected void refreshDisplay() {
+        Account curAccount = AccountManager.getCurrentAccount();
         usernameView.setText(curAccount.getUsername());
         String address = curAccount.getAddress();
-        if (address.length() == 42){
-            String address_brief = address.substring(0,10) + "..." + address.substring(32,42);
+        if (address.length() == 42) {
+            String address_brief = address.substring(0, 10) + "..." + address.substring(32, 42);
             addressView.setText(address_brief);
-        }else{
+        } else {
             Toast.makeText(this.getActivity(), "The format of address is incorrect", Toast.LENGTH_SHORT).show();
         }
 
-        double realETH = curAccount.getEthereum() * 2901.20;
+        double realETH = curAccount.getEthereum() * Utility.eth2cny;
         double realselfCoin = curAccount.getSelfCoin() * 0.05;
 
-        realTotalView.setText(String.format(Locale.CHINA,"%.2f", realETH+realselfCoin));
+        realTotalView.setText(String.format(Locale.CHINA, "%.2f", realETH + realselfCoin));
 
-        ETHView.setText(String.format(Locale.CHINA,"%.2f", curAccount.getEthereum()));
-        realETHView.setText(String.format(Locale.CHINA,"%.2f", realETH));
-        SelfCoinView.setText(String.format(Locale.CHINA,"%.2f", curAccount.getSelfCoin()));
-        realSelfCoinView.setText(String.format(Locale.CHINA,"%.2f", realselfCoin));
-
+        ETHView.setText(String.format(Locale.CHINA, "%.2f", curAccount.getEthereum()));
+        realETHView.setText(String.format(Locale.CHINA, "%.2f", realETH));
+        SelfCoinView.setText(String.format(Locale.CHINA, "%.2f", curAccount.getSelfCoin()));
+        realSelfCoinView.setText(String.format(Locale.CHINA, "%.2f", realselfCoin));
 
         swipeRefreshLayout.setRefreshing(false);
     }

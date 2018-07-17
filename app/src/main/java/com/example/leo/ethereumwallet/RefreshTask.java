@@ -7,17 +7,15 @@ import android.widget.Toast;
 
 public class RefreshTask extends AsyncTask<Void, Void, Double> {
     private static final String TAG = "RefreshTask";
-    
-    private int accountIndex;
+
     private AssetFragment assetFragment;
     private String address;
     private Account curAccount;
 
-    public RefreshTask(int accountIndex, AssetFragment assetFragment){
+    public RefreshTask(AssetFragment assetFragment) {
         Log.d(TAG, "RefreshTask: Using refresh task");
-        this.accountIndex = accountIndex;
         this.assetFragment = assetFragment;
-        curAccount = AccountUtil.accounts.get(accountIndex);
+        curAccount = AccountManager.getCurrentAccount();
     }
 
     @Override
@@ -30,7 +28,11 @@ public class RefreshTask extends AsyncTask<Void, Void, Double> {
 
     @Override
     protected Double doInBackground(Void... voids) {
-        Double ethAmount =  Web3jUtil.getEtherBalance(address);
+        Utility.getEtherExchangeRate();
+        Log.d(TAG, "doInBackground: CNY: " + Utility.eth2cny);
+        Log.d(TAG, "doInBackground: USD: " + Utility.eth2usd);
+        double ethAmount = Utility.getEtherBalance(address);
+
         return ethAmount;
     }
 
@@ -38,8 +40,10 @@ public class RefreshTask extends AsyncTask<Void, Void, Double> {
     protected void onPostExecute(Double ethAmount) {
         if (ethAmount >= 0) {
             curAccount.setEthereum(ethAmount);
-            assetFragment.refreshDisplay(accountIndex);
+            assetFragment.refreshDisplay();
         } else {
+            assetFragment.swipeRefreshLayout.setRefreshing(false);
+            assetFragment.menuButton.setClickable(true);
             Toast.makeText(assetFragment.getActivity(), "Failed to Refresh", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "refreshAccount: Failed");
         }

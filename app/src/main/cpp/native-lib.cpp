@@ -4,7 +4,7 @@
 extern "C" JNIEXPORT jstring
 
 JNICALL
-Java_com_example_leo_ethereumwallet_LoginActivity_stringFromJNI(
+Java_com_example_leo_ethereumwallet_StartActivity_stringFromJNI(
         JNIEnv *env,
         jobject /* this */) {
     std::string hello = "Hello from C++";

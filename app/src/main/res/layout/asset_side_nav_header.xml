@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="50dp">
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
-        android:padding="10dp"
         android:background="#e6e6e6"
         android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:padding="10dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/asset_side_nav_image"
@@ -24,8 +24,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:textSize="24sp"
-            android:layout_marginLeft="10dp"/>
+            android:layout_marginLeft="10dp"
+            android:textSize="24sp" />
 
     </LinearLayout>
 

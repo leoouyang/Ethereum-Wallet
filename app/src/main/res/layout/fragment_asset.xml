@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/asset_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".AssetFragment"
-    android:id="@+id/asset_drawer_layout">
+    tools:context=".AssetFragment">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/asset_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -23,10 +23,10 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/asset_background"
-                    android:maxHeight="0dp"
                     android:adjustViewBounds="true"
-                    android:scaleType="fitXY"/>
+                    android:maxHeight="0dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/asset_background" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -57,6 +57,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_margin="5dp"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
                         android:orientation="horizontal">
 
                         <TextView
@@ -77,8 +79,8 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="10dp">
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -109,8 +111,8 @@
                     android:id="@+id/asset_menu"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_marginTop="25dp"
                     android:layout_marginLeft="15dp"
+                    android:layout_marginTop="25dp"
                     android:background="@drawable/ic_asset_menu" />
 
             </FrameLayout>
@@ -124,18 +126,18 @@
                     android:id="@+id/asset_eth_image"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:layout_centerVertical="true"
                     android:layout_alignParentLeft="true"
-                    android:src="@drawable/js_images_asset_eth"/>
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/js_images_asset_eth" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/asset_eth_image"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="15dp"
-                    android:textSize="30sp"
-                    android:text="@string/eth"/>
+                    android:layout_toRightOf="@id/asset_eth_image"
+                    android:text="@string/eth"
+                    android:textSize="30sp" />
 
                 <TextView
                     android:id="@+id/asset_eth_amount"
@@ -144,34 +146,34 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="15dp"
-                    android:textSize="30sp"/>
+                    android:textSize="30sp" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_alignRight="@id/asset_eth_amount"
                     android:layout_below="@id/asset_eth_amount"
-                    android:layout_alignRight="@id/asset_eth_amount">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginRight="3dp"
-                        android:text="@string/approx_equal"/>
+                    android:layout_marginTop="10dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="3dp"
-                        android:textSize="16sp"
-                        android:text="@string/dollar_sign"/>
+                        android:text="@string/approx_equal"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="3dp"
+                        android:text="@string/dollar_sign"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/asset_eth_amount_real"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"/>
+                        android:textSize="16sp" />
 
                 </LinearLayout>
 
@@ -186,18 +188,18 @@
                     android:id="@+id/asset_selfCoin_image"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:layout_centerVertical="true"
                     android:layout_alignParentLeft="true"
-                    android:src="@drawable/js_images_asset_augur"/>
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/js_images_asset_augur" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/asset_selfCoin_image"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="15dp"
-                    android:textSize="30sp"
-                    android:text="@string/selfcoin"/>
+                    android:layout_toRightOf="@id/asset_selfCoin_image"
+                    android:text="@string/selfcoin"
+                    android:textSize="30sp" />
 
                 <TextView
                     android:id="@+id/asset_selfCoin_amount"
@@ -206,34 +208,34 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="15dp"
-                    android:textSize="30sp"/>
+                    android:textSize="30sp" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_alignRight="@id/asset_selfCoin_amount"
                     android:layout_below="@id/asset_selfCoin_amount"
-                    android:layout_alignRight="@id/asset_selfCoin_amount">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:layout_marginRight="3dp"
-                        android:text="@string/approx_equal"/>
+                    android:layout_marginTop="10dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="3dp"
-                        android:textSize="16sp"
-                        android:text="@string/dollar_sign"/>
+                        android:text="@string/approx_equal"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="3dp"
+                        android:text="@string/dollar_sign"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/asset_selfCoin_amount_real"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp"/>
+                        android:textSize="16sp" />
 
                 </LinearLayout>
 
@@ -241,74 +243,77 @@
 
         </LinearLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
-    
+
     <!--<android.support.design.widget.NavigationView-->
-        <!--android:id="@+id/asset_side_nav"-->
-        <!--android:layout_gravity = "left"-->
-        <!--app:menu="@menu/side_nav"-->
-        <!--app:headerLayout="@layout/asset_side_nav_header"-->
-        <!--android:layout_width="250dp"-->
-        <!--android:layout_height="match_parent"/>-->
+    <!--android:id="@+id/asset_side_nav"-->
+    <!--android:layout_gravity = "left"-->
+    <!--app:menu="@menu/side_nav"-->
+    <!--app:headerLayout="@layout/asset_side_nav_header"-->
+    <!--android:layout_width="250dp"-->
+    <!--android:layout_height="match_parent"/>-->
 
     <LinearLayout
-        android:orientation="vertical"
-        android:background="#FFF"
-        android:layout_gravity = "left"
         android:layout_width="250dp"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        android:background="#FFF"
+        android:orientation="vertical">
 
         <android.support.v7.widget.RecyclerView
-            android:layout_marginTop="30dp"
             android:id="@+id/asset_side_nav_accounts"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </android.support.v7.widget.RecyclerView>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"></android.support.v7.widget.RecyclerView>
 
         <LinearLayout
-            android:background="#d4d4d4"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="10dp"
+            android:background="#d4d4d4" />
 
         <LinearLayout
             android:id="@+id/asset_side_nav_scanQR"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true">
 
             <ImageView
-                android:layout_marginLeft="15dp"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="15dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_asset_scan"/>
+                android:src="@drawable/ic_asset_scan" />
 
             <TextView
-                android:layout_margin="15dp"
-                android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/scanQR"/>
+                android:layout_margin="15dp"
+                android:text="@string/scanQR"
+                android:textSize="20sp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/asset_side_nav_create_account"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true">
 
             <ImageView
-                android:layout_marginLeft="15dp"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="15dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_asset_create_wallet"/>
+                android:src="@drawable/ic_asset_create_wallet" />
 
             <TextView
-                android:layout_margin="15dp"
-                android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/create_new_wallet"/>
+                android:layout_margin="15dp"
+                android:text="@string/create_new_wallet"
+                android:textSize="20sp" />
 
         </LinearLayout>
 

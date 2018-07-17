@@ -7,11 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -20,20 +16,7 @@ public class SideAccountAdapter extends RecyclerView.Adapter {
     private AssetFragment assetFragment;
     private int curIndex = 0;
 
-    static class ViewHolder extends RecyclerView.ViewHolder{
-        View accountView;
-        CircleImageView profilePicture;
-        TextView username;
-
-        private ViewHolder(View view){
-            super(view);
-            accountView = view;
-            profilePicture = view.findViewById(R.id.asset_side_nav_image);
-            username = view.findViewById(R.id.asset_side_nav_username);
-        }
-    }
-
-    public SideAccountAdapter(AssetFragment assetFragment){
+    public SideAccountAdapter(AssetFragment assetFragment) {
         this.assetFragment = assetFragment;
     }
 
@@ -48,8 +31,9 @@ public class SideAccountAdapter extends RecyclerView.Adapter {
                 notifyItemChanged(curIndex);
                 curIndex = holder.getAdapterPosition();
                 notifyItemChanged(curIndex);
-                assetFragment.refreshDisplay(curIndex);
-                new RefreshTask(curIndex, assetFragment).execute();
+                AccountManager.setCurAccountIndex(curIndex);
+                assetFragment.refreshDisplay();
+                new RefreshTask(assetFragment).execute();
             }
         });
         return holder;
@@ -58,18 +42,31 @@ public class SideAccountAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: bind position " + position);
-        Account account = AccountUtil.accounts.get(position);
+        Account account = AccountManager.getAccountAtIndex(position);
         ((ViewHolder) holder).profilePicture.setImageResource(R.drawable.empty_profile_public);
         ((ViewHolder) holder).username.setText(account.getUsername());
-        if (position == curIndex){
-            ((ViewHolder)holder).accountView.setBackgroundColor(Color.parseColor("#d4d4d4"));
-        }else {
-            ((ViewHolder)holder).accountView.setBackgroundColor(Color.parseColor("#ffffff"));
+        if (position == curIndex) {
+            ((ViewHolder) holder).accountView.setBackgroundColor(Color.parseColor("#d4d4d4"));
+        } else {
+            ((ViewHolder) holder).accountView.setBackgroundColor(Color.parseColor("#ffffff"));
         }
     }
 
     @Override
     public int getItemCount() {
-        return AccountUtil.accounts.size();
+        return AccountManager.getAccountSize();
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        View accountView;
+        CircleImageView profilePicture;
+        TextView username;
+
+        private ViewHolder(View view) {
+            super(view);
+            accountView = view;
+            profilePicture = view.findViewById(R.id.asset_side_nav_image);
+            username = view.findViewById(R.id.asset_side_nav_username);
+        }
     }
 }

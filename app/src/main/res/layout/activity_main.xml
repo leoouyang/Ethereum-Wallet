@@ -14,7 +14,7 @@
         <FrameLayout
             android:id="@+id/main_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
     </FrameLayout>
 
@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_above="@id/navigator"
-        android:background="#d4d4d4"/>
+        android:background="#d4d4d4" />
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigator"
@@ -32,6 +32,6 @@
         android:background="#f0f0f0"
 
         app:itemTextColor="#000"
-        app:menu="@menu/navigation"/>
+        app:menu="@menu/navigation" />
 
 </RelativeLayout>

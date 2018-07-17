@@ -67,9 +67,8 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="C:\Leo\Projects\other\ic_menu.png" />
-                                      <entry key="outputName" value="ic_asset_menu" />
-                                      <entry key="theme" value="HOLO_DARK" />
+                                      <entry key="imageAsset" value="C:\Leo\Projects\other\js_images_common_backdeepblack.png" />
+                                      <entry key="outputName" value="ic_back" />
                                     </map>
                                   </option>
                                 </PersistentState>

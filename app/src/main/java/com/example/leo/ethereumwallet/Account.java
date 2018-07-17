@@ -1,18 +1,27 @@
 package com.example.leo.ethereumwallet;
 
 public class Account {
-    private String privateKey;
+    //    private String privateKey;
+    private String keystore;
     private String address;
     private String username;
     private double ethereum = 0.0;
     private double selfCoin = 0.0;
 
-    public String getPrivateKey() {
-        return privateKey;
+//    public String getPrivateKey() {
+//        return privateKey;
+//    }
+
+//    public void setPrivateKey(String privateKey) {
+//        this.privateKey = privateKey;
+//    }
+
+    public String getKeystore() {
+        return keystore;
     }
 
-    public void setPrivateKey(String privateKey) {
-        this.privateKey = privateKey;
+    public void setKeystore(String keystore) {
+        this.keystore = keystore;
     }
 
     public String getAddress() {
@@ -45,5 +54,19 @@ public class Account {
 
     public void setSelfCoin(double selfCoin) {
         this.selfCoin = selfCoin;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Address: ")
+                .append(getAddress())
+//                .append("Private Key: ")
+//                .append(getPrivateKey())
+                .append("Name: ")
+                .append(getUsername())
+                .append("Keystore: ")
+                .append(getKeystore());
+        return builder.toString();
     }
 }

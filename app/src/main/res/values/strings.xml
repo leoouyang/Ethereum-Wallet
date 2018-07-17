@@ -22,4 +22,25 @@
     <string name="eth">ETH</string>
 
     <string name="selfcoin">BLOC</string>
+
+    <string name="password_inconsistent">密码不一致，请重新输入</string>
+
+    <string name="empty_password">密码不可为空</string>
+
+    <string name="wallet_name_too_long">钱包名字应为1~12位</string>
+
+    <string name="wallet_name_existed">钱包名字已存在</string>
+
+    <string name="wallet_name">钱包名称</string>
+
+    <string name="password">密码</string>
+
+    <string name="repeat_password">重复密码</string>
+
+    <string name="import_wallet">导入钱包</string>
+
+    <string name="private_key">秘钥</string>
+
+    <string name="wallet_existed">钱包已存在</string>
+
 </resources>
