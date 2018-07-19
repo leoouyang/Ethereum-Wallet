@@ -14,7 +14,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class SideAccountAdapter extends RecyclerView.Adapter {
     private static final String TAG = "SideAccountAdapter";
     private AssetFragment assetFragment;
-    private int curIndex = 0;
+    private int prevIndex = 0;
 
     public SideAccountAdapter(AssetFragment assetFragment) {
         this.assetFragment = assetFragment;
@@ -28,12 +28,13 @@ public class SideAccountAdapter extends RecyclerView.Adapter {
         holder.accountView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                notifyItemChanged(curIndex);
-                curIndex = holder.getAdapterPosition();
-                notifyItemChanged(curIndex);
+                int curIndex = holder.getAdapterPosition();
                 AccountManager.setCurAccountIndex(curIndex);
+                notifyItemChanged(prevIndex);
+                prevIndex = curIndex;
+                notifyItemChanged(curIndex);
                 assetFragment.refreshDisplay();
-                new RefreshTask(assetFragment).execute();
+                new AssetRefreshTask(assetFragment).execute();
             }
         });
         return holder;
@@ -45,12 +46,15 @@ public class SideAccountAdapter extends RecyclerView.Adapter {
         Account account = AccountManager.getAccountAtIndex(position);
         ((ViewHolder) holder).profilePicture.setImageResource(R.drawable.empty_profile_public);
         ((ViewHolder) holder).username.setText(account.getUsername());
-        if (position == curIndex) {
+        if (position == AccountManager.getCurAccountIndex()) {
+            prevIndex = position;
             ((ViewHolder) holder).accountView.setBackgroundColor(Color.parseColor("#d4d4d4"));
         } else {
             ((ViewHolder) holder).accountView.setBackgroundColor(Color.parseColor("#ffffff"));
         }
     }
+
+
 
     @Override
     public int getItemCount() {

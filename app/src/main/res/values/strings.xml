@@ -5,7 +5,7 @@
 
     <string name="approx_equal">≈</string>
 
-    <string name="dollar_sign">¥</string>
+    <string name="cny_sign">¥</string>
 
     <string name="total_asset">总资产（¥）</string>
 
@@ -43,4 +43,11 @@
 
     <string name="wallet_existed">钱包已存在</string>
 
+    <string name="wallet_needed">请创建钱包以继续</string>
+
+    <string name="usd">美元（$）</string>
+
+    <string name="cny">人民币（￥）</string>
+
+    <string name="asset_name">资产名称</string>
 </resources>

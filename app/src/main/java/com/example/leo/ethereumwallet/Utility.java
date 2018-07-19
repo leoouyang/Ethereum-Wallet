@@ -1,6 +1,9 @@
 package com.example.leo.ethereumwallet;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -24,14 +27,41 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class Utility {
+    public static final String REFRESH_PRICE_SIGNAL = "com.example.leo.ethereumwallet.PRICE_REFRESHED";
+
     private static final String INFURA_ADDRESS = "https://ropsten.infura.io/";
     private static final String INFURA_TOKEN = "LaSYLIXhaLNU6l2t5zXZ";
+    private static final String NODE = "http://139.129.167.190:8545";
     private static final BigDecimal ETHER2WEI = new BigDecimal(Math.pow(10, 18));
     private static final String TAG = "Utility";
+//    private static final Web3j web3 = Web3jFactory.build(new HttpService(NODE));
     private static final Web3j web3 = Web3jFactory.build(new HttpService(INFURA_ADDRESS + INFURA_TOKEN));
-    //todo change node to our own node
-    protected static double eth2usd = 0;
-    protected static double eth2cny = 0;
+
+    private static volatile float eth2usd = 0;
+    private static volatile float eth2cny = 0;
+
+    public static float getEth2usd() {
+        return eth2usd;
+    }
+
+    public static float getEth2cny() {
+        return eth2cny;
+    }
+
+
+
+    public static void loadExchangeRates(Context context){
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        eth2usd = pref.getFloat("eth2usd", 0);
+        eth2cny = pref.getFloat("eth2cny", 0);
+    }
+
+    public static void saveExchangeRates(Context context){
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        editor.putFloat("eth2usd", eth2usd);
+        editor.putFloat("eth2cny", eth2cny);
+        editor.apply();
+    }
 
     public static double getEtherBalance(String address) {
 
@@ -48,7 +78,7 @@ public class Utility {
         return -1.0;
     }
 
-    public static void getEtherExchangeRate() {
+    public static void getEtherExchangeRate(Context context) {
         try {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
@@ -57,8 +87,13 @@ public class Utility {
             Response response = client.newCall(request).execute();
             String reseponseData = response.body().string();
             JSONObject jsonObject = new JSONObject(reseponseData);
-            eth2usd = jsonObject.getDouble("USD");
-            eth2cny = jsonObject.getDouble("CNY");
+            eth2usd = (float)jsonObject.getDouble("USD");
+            eth2cny = (float)jsonObject.getDouble("CNY");
+
+            Intent intent = new Intent(REFRESH_PRICE_SIGNAL);
+            context.sendBroadcast(intent);
+            Log.d(TAG, "doInBackground: CNY: " + eth2cny);
+            Log.d(TAG, "doInBackground: USD: " + eth2usd);
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
@@ -69,6 +104,7 @@ public class Utility {
     }
 
     public static String createKeyStore(Context context, String password, String privateKey) {
+
         try {
             String fileName = Utility.getWalletdirectory(context);
             File outDir = new File(fileName);
@@ -77,10 +113,10 @@ public class Utility {
             }
             String createdfileName;
             if (privateKey == null) {
-                createdfileName = WalletUtils.generateFullNewWalletFile(password, outDir);
+                createdfileName = WalletUtils.generateLightNewWalletFile(password, outDir);
             } else {
                 ECKeyPair keyPair = ECKeyPair.create(new BigInteger(privateKey, 16));
-                createdfileName = WalletUtils.generateWalletFile(password, keyPair, outDir, true);
+                createdfileName = WalletUtils.generateWalletFile(password, keyPair, outDir, false);
             }
             return createdfileName;
         } catch (Exception e) {

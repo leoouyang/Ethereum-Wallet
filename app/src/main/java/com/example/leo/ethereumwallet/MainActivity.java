@@ -22,9 +22,9 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView navigationView;
 
     private boolean secondBack = false;
-    private AssetFragment assetFragment = new AssetFragment();
-    private PriceFragment priceFragment = new PriceFragment();
-    private MeFragment meFragment = new MeFragment();
+    private AssetFragment assetFragment;
+    private PriceFragment priceFragment;
+    private MeFragment meFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,15 +84,21 @@ public class MainActivity extends AppCompatActivity {
 //        AccountManager.accounts.add(account2);
 //        AccountManager.saveAccounts(this);
 //        AccountManager.loadAccounts(this);
+        Utility.loadExchangeRates(this);
         initFragment();
     }
 
     private void initFragment() {
+        priceFragment = new PriceFragment();
+        assetFragment = new AssetFragment();
+        meFragment = new MeFragment();
         FragmentManager fragmentManager = MainActivity.this.getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.main_view, meFragment);
-        transaction.add(R.id.main_view, priceFragment);
         transaction.add(R.id.main_view, assetFragment);
+        transaction.add(R.id.main_view, priceFragment);
+        transaction.hide(priceFragment);
+        transaction.add(R.id.main_view, meFragment);
+        transaction.hide(meFragment);
         transaction.commit();
     }
 
@@ -113,9 +119,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        AccountManager.saveAccounts(this);
+        Utility.saveExchangeRates(this);
+    }
+
+    @Override
     protected void onDestroy() {
 //        Utility.web3.shutdown();
-        AccountManager.saveAccounts(this);
+//        AccountManager.saveAccounts(this);
         super.onDestroy();
     }
 }

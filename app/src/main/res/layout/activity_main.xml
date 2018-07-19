@@ -27,7 +27,7 @@
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigator"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?android:attr/actionBarSize"
         android:layout_alignParentBottom="true"
         android:background="#f0f0f0"
 

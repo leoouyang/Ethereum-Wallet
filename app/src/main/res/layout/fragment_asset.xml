@@ -4,7 +4,8 @@
     android:id="@+id/asset_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AssetFragment">
+    tools:context=".AssetFragment"
+    android:background="#fff">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/asset_swipe_refresh"
@@ -49,7 +50,7 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_margin="5dp"
                         android:textColor="#fff"
-                        android:textSize="25sp" />
+                        android:textSize="22sp" />
 
                     <LinearLayout
                         android:id="@+id/asset_receive_layout"
@@ -63,7 +64,7 @@
 
                         <TextView
                             android:id="@+id/asset_address"
-                            android:layout_width="180dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="#fff" />
 
@@ -88,14 +89,14 @@
                             android:layout_gravity="center_vertical"
                             android:text="@string/approx_equal"
                             android:textColor="#fff"
-                            android:textSize="25sp" />
+                            android:textSize="22sp" />
 
                         <TextView
                             android:id="@+id/asset_total_real"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="#fff"
-                            android:textSize="45sp" />
+                            android:textSize="42sp" />
                     </LinearLayout>
 
                     <TextView
@@ -103,7 +104,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/total_asset"
                         android:textColor="#fff"
-                        android:textSize="18sp" />
+                        android:textSize="15sp" />
 
                 </LinearLayout>
 
@@ -137,7 +138,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_toRightOf="@id/asset_eth_image"
                     android:text="@string/eth"
-                    android:textSize="30sp" />
+                    android:textSize="27sp" />
 
                 <TextView
                     android:id="@+id/asset_eth_amount"
@@ -146,7 +147,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="15dp"
-                    android:textSize="30sp" />
+                    android:textSize="27sp" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -160,20 +161,20 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="3dp"
                         android:text="@string/approx_equal"
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="3dp"
-                        android:text="@string/dollar_sign"
-                        android:textSize="16sp" />
+                        android:text="@string/cny_sign"
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/asset_eth_amount_real"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                 </LinearLayout>
 
@@ -199,7 +200,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_toRightOf="@id/asset_selfCoin_image"
                     android:text="@string/selfcoin"
-                    android:textSize="30sp" />
+                    android:textSize="27sp" />
 
                 <TextView
                     android:id="@+id/asset_selfCoin_amount"
@@ -208,7 +209,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="15dp"
-                    android:textSize="30sp" />
+                    android:textSize="27sp" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -222,20 +223,20 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="3dp"
                         android:text="@string/approx_equal"
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="3dp"
-                        android:text="@string/dollar_sign"
-                        android:textSize="16sp" />
+                        android:text="@string/cny_sign"
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/asset_selfCoin_amount_real"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                 </LinearLayout>
 

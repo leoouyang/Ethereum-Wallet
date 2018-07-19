@@ -65,6 +65,12 @@ public class ImportWalletActivity extends AppCompatActivity implements View.OnCl
                     Log.d(TAG, "onClick: ");
                     new CreateWalletTask(this, walletNameInput, passwordInput).execute(privateKeyInput);
                 }
+                break;
+            case R.id.import_wallet_return:
+                this.finish();
+                break;
+            default:
+                break;
         }
     }
 }

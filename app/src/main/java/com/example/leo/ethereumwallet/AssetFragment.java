@@ -41,9 +41,11 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
     private TextView SelfCoinView;
     private TextView realSelfCoinView;
 
+    private boolean firstTime;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        firstTime = true;
     }
 
     @Override
@@ -82,7 +84,7 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
             public void onRefresh() {
 //                AssetFragment.this.getActivity().getWindow().setFlags(
 //                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                new RefreshTask(AssetFragment.this).execute();
+                new AssetRefreshTask(AssetFragment.this).execute();
 //                refreshAccount(curAccountIndex);
             }
         });
@@ -90,7 +92,7 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
         if (AccountManager.getAccountSize() > 0) {
             AccountManager.setCurAccountIndex(0);
             refreshDisplay();
-            new RefreshTask(this).execute();
+            new AssetRefreshTask(this).execute();
         } else {
             Log.d(TAG, "onCreateView: Empty accounts list");
         }
@@ -132,40 +134,16 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-//    protected void refreshAccount(final int i){
-//        drawerLayout.closeDrawer(Gravity.LEFT);
-//        swipeRefreshLayout.setRefreshing(true);
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-////                try{
-////
-////                    Thread.sleep(1000);
-////                }catch (Exception e){
-////                    e.printStackTrace();
-////                }
-//                Account curAccount = AccountManager.accounts.get(i);
-//                double ethAmount = Utility.getEtherBalance(curAccount.getAddress());
-//                if (ethAmount >= 0) {
-//                    curAccount.setEthereum(ethAmount);
-//                    refreshDisplay(i);
-//                } else {
-//                    AssetFragment.this.getActivity().runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            Toast.makeText(AssetFragment.this.getActivity(), "Failed to Refresh", Toast.LENGTH_SHORT).show();
-//                            Log.d(TAG, "refreshAccount: Failed");
-//                        }
-//                    });
-//                }
-//            }
-//        }).start();
-//    }
-
     @Override
     public void onResume() {
         super.onResume();
-        recyclerView.getAdapter().notifyDataSetChanged();
+        if(!firstTime){
+            recyclerView.getAdapter().notifyDataSetChanged();
+            refreshDisplay();
+            new AssetRefreshTask(this).execute();
+        }else{
+            firstTime = false;
+        }
     }
 
     protected void refreshDisplay() {
@@ -179,7 +157,7 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
             Toast.makeText(this.getActivity(), "The format of address is incorrect", Toast.LENGTH_SHORT).show();
         }
 
-        double realETH = curAccount.getEthereum() * Utility.eth2cny;
+        double realETH = curAccount.getEthereum() * Utility.getEth2cny();
         double realselfCoin = curAccount.getSelfCoin() * 0.05;
 
         realTotalView.setText(String.format(Locale.CHINA, "%.2f", realETH + realselfCoin));

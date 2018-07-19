@@ -5,15 +5,15 @@ import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
-public class RefreshTask extends AsyncTask<Void, Void, Double> {
-    private static final String TAG = "RefreshTask";
+public class AssetRefreshTask extends AsyncTask<Void, Void, Double> {
+    private static final String TAG = "AssetRefreshTask";
 
     private AssetFragment assetFragment;
     private String address;
     private Account curAccount;
 
-    public RefreshTask(AssetFragment assetFragment) {
-        Log.d(TAG, "RefreshTask: Using refresh task");
+    public AssetRefreshTask(AssetFragment assetFragment) {
+        Log.d(TAG, "AssetRefreshTask: Using refresh task");
         this.assetFragment = assetFragment;
         curAccount = AccountManager.getCurrentAccount();
     }
@@ -28,19 +28,19 @@ public class RefreshTask extends AsyncTask<Void, Void, Double> {
 
     @Override
     protected Double doInBackground(Void... voids) {
-        Utility.getEtherExchangeRate();
-        Log.d(TAG, "doInBackground: CNY: " + Utility.eth2cny);
-        Log.d(TAG, "doInBackground: USD: " + Utility.eth2usd);
+        Utility.getEtherExchangeRate(assetFragment.getActivity());
         double ethAmount = Utility.getEtherBalance(address);
 
         return ethAmount;
     }
+
 
     @Override
     protected void onPostExecute(Double ethAmount) {
         if (ethAmount >= 0) {
             curAccount.setEthereum(ethAmount);
             assetFragment.refreshDisplay();
+
         } else {
             assetFragment.swipeRefreshLayout.setRefreshing(false);
             assetFragment.menuButton.setClickable(true);

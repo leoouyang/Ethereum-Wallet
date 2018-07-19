@@ -19,7 +19,7 @@ import java.util.List;
 public class AccountManager {
     private static final String TAG = "AccountManager";
     private static final String accountFilename = "accounts";
-    private static List<Account> accounts = new ArrayList<Account>();
+    private static List<Account> accounts = new ArrayList<>();
     private static int curAccountIndex = -1;
 
     public static int getCurAccountIndex() {
@@ -39,7 +39,7 @@ public class AccountManager {
 
     public static boolean checkNameExisted(String name){
         for (Account account : accounts) {
-            if (account.getAddress().equals(name)) {
+            if (account.getUsername().equals(name)) {
                 return true;
             }
         }

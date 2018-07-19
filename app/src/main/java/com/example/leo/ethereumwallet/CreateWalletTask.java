@@ -26,7 +26,7 @@ public class CreateWalletTask extends AsyncTask<String, Void, String> {
     @Override
     protected void onPreExecute() {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity.get());
-        builder.setMessage("生成中...");
+        builder.setMessage("生成钱包中...");
         builder.setCancelable(false);
         dialog = builder.create();
         dialog.show();
@@ -34,7 +34,10 @@ public class CreateWalletTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... strings) {
-        return Utility.createKeyStore(activity.get(), passwordInput, strings[0]);
+        Log.d(TAG, "doInBackground: test");
+        String address = Utility.createKeyStore(activity.get(), passwordInput, strings[0]);
+        Log.d(TAG, "doInBackground: test");
+        return address;
     }
 
     @Override
