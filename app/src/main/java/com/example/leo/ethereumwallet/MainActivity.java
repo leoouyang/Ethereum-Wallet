@@ -76,15 +76,18 @@ public class MainActivity extends AppCompatActivity {
 //        account.setAddress("0x8E647387434cac6cAC3DCFc5170f946e10DA57B0");
 //        account.setPrivateKey("47cdb88b969767933348d2550f0516a601151158c300d34b1cb6902d5471d873");
 //        account.setUsername("ouyang");
-//        AccountManager.accounts.add(account);
+//        AccountsManager.accounts.add(account);
 //        Account account2 = new Account();
 //        account2.setAddress("0x9b3aFF61a18C117257Ce1f6CAF6Ad69eE7A0189B");
 //        account2.setPrivateKey("91457d7f2c42885b1d23e171ae20424e7916e21e252c98c27d0b957701f435e6");
 //        account2.setUsername("awepofnawefo");
-//        AccountManager.accounts.add(account2);
-//        AccountManager.saveAccounts(this);
-//        AccountManager.loadAccounts(this);
+//        AccountsManager.accounts.add(account2);
+//        AccountsManager.saveAccounts(this);
+//        AccountsManager.loadAccounts(this);
         Utility.loadExchangeRates(this);
+        if (AccountsManager.getAccountSize() == 0){
+            AccountsManager.loadAccounts(this);
+        }
         initFragment();
     }
 
@@ -121,14 +124,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        AccountManager.saveAccounts(this);
+        AccountsManager.saveAccounts(this);
         Utility.saveExchangeRates(this);
     }
 
     @Override
     protected void onDestroy() {
 //        Utility.web3.shutdown();
-//        AccountManager.saveAccounts(this);
+//        AccountsManager.saveAccounts(this);
         super.onDestroy();
     }
 }

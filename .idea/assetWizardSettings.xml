@@ -68,10 +68,10 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="C:\Leo\Projects\other\equals_201px_1158603_easyicon.net.png" />
-                                      <entry key="outputName" value="ic_equal" />
-                                      <entry key="theme" value="HOLO_DARK" />
-                                      <entry key="themeColor" value="ffffff" />
+                                      <entry key="imageAsset" value="C:\Leo\Projects\other\arrow_802px_1147807_easyicon.net.png" />
+                                      <entry key="outputName" value="ic_arrow_down" />
+                                      <entry key="theme" value="CUSTOM" />
+                                      <entry key="themeColor" value="ff0000" />
                                     </map>
                                   </option>
                                 </PersistentState>

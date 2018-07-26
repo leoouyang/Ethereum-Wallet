@@ -3,7 +3,6 @@ package com.example.leo.ethereumwallet;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Toast;
 
 public class StartActivity extends AppCompatActivity {
@@ -20,15 +19,14 @@ public class StartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        AccountManager.loadAccounts(this);
+        AccountsManager.loadAccounts(this);
 //
 //        firstTime = true;
-//        if(AccountManager.getAccountSize() > 0){
+//        if(AccountsManager.getAccountSize() > 0){
 //            Intent i = new Intent(this, MainActivity.class);
 //            startActivity(i);
 //            finish();
 //        }else{
-//            //todo more testing on this ides
 //            Intent i = new Intent(this, CreateWalletActivity.class);
 //            startActivity(i);
 //        }
@@ -38,14 +36,13 @@ public class StartActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if(AccountManager.getAccountSize() > 0){
+        if(AccountsManager.getAccountSize() > 0){
             Intent i = new Intent(this, MainActivity.class);
             startActivity(i);
             finish();
         }else{
             Toast.makeText(this, R.string.wallet_needed, Toast.LENGTH_SHORT).show();
-            Intent i = new Intent(this, CreateWalletActivity.class);
-            startActivity(i);
+            CreateWalletActivity.actionStart(this);
         }
     }
 

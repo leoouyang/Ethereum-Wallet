@@ -8,20 +8,34 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.RawTransaction;
+import org.web3j.crypto.TransactionEncoder;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
+import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
+import org.web3j.protocol.core.methods.response.EthSendTransaction;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tx.ReadonlyTransactionManager;
+import org.web3j.tx.TransactionManager;
+import org.web3j.tx.Transfer;
+import org.web3j.utils.Convert;
+import org.web3j.utils.Numeric;
 
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import okhttp3.Address;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -31,11 +45,11 @@ public class Utility {
 
     private static final String INFURA_ADDRESS = "https://ropsten.infura.io/";
     private static final String INFURA_TOKEN = "LaSYLIXhaLNU6l2t5zXZ";
-    private static final String NODE = "http://139.129.167.190:8545";
-    private static final BigDecimal ETHER2WEI = new BigDecimal(Math.pow(10, 18));
+    private static final String NODE = "http://192.168.31.246:8545";
+        private static final String BLOC_ADDRESS = "0x097544cCc24766afF1BF3a78a219C8e1E304Be14";
     private static final String TAG = "Utility";
-//    private static final Web3j web3 = Web3jFactory.build(new HttpService(NODE));
-    private static final Web3j web3 = Web3jFactory.build(new HttpService(INFURA_ADDRESS + INFURA_TOKEN));
+    private static final Web3j web3 = Web3jFactory.build(new HttpService(NODE));
+//    private static final Web3j web3 = Web3jFactory.build(new HttpService(INFURA_ADDRESS + INFURA_TOKEN));
 
     private static volatile float eth2usd = 0;
     private static volatile float eth2cny = 0;
@@ -69,7 +83,8 @@ public class Utility {
             Log.d(TAG, "getEtherBalance: " + address);
             EthGetBalance ethGetBalance = web3.ethGetBalance(address, DefaultBlockParameterName.LATEST).send();
             BigInteger weiBalance = ethGetBalance.getBalance();
-            BigDecimal etherBalance = new BigDecimal(weiBalance).divide(ETHER2WEI, RoundingMode.HALF_UP);
+            BigDecimal etherBalance = Convert.fromWei(new BigDecimal(weiBalance),Convert.Unit.ETHER);
+//            BigDecimal etherBalance = new BigDecimal(weiBalance).divide(ETHER2WEI, RoundingMode.HALF_UP);
             Log.d(TAG, "getEtherBalance: " + etherBalance.doubleValue());
             return etherBalance.doubleValue();
         } catch (Exception e) {
@@ -99,8 +114,56 @@ public class Utility {
         }
     }
 
+    public static double getBlocBalance(String address){
+        //todo
+        TransactionManager transactionManager = new ReadonlyTransactionManager(web3, address);
+        BlockcloudToken blockcloudToken = BlockcloudToken.load(BLOC_ADDRESS, web3, transactionManager, BigInteger.valueOf(0),BigInteger.valueOf(0));
+        try{
+            BigInteger result = blockcloudToken.balanceOf(AccountsManager.getCurrentAccount().getAddress()).send();
+            BigDecimal blocBalance = Convert.fromWei(new BigDecimal(result),Convert.Unit.ETHER);
+            Log.d(TAG, "getBlocBalance: " + blocBalance.doubleValue());
+            return blocBalance.doubleValue();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return -1.0;
+    }
+
     public static String getWalletdirectory(Context context) {
         return context.getFilesDir().getAbsolutePath() + "/keystore";
+    }
+
+    public static EthSendTransaction makeETHTransaction(Credentials credentials, String receiverAddress, double gasPrice, int gasLimit, double value){
+        try {
+            EthGetTransactionCount ethGetTransactionCount = web3.ethGetTransactionCount(credentials.getAddress(), DefaultBlockParameterName.LATEST).send();
+            BigInteger nonce = ethGetTransactionCount.getTransactionCount();
+            Log.d(TAG, "makeETHTransaction: nonce is "+ nonce);
+            BigInteger gasPriceWei = Convert.toWei(new BigDecimal(gasPrice), Convert.Unit.GWEI).toBigInteger();
+            BigInteger valueWei = Convert.toWei(new BigDecimal(value), Convert.Unit.ETHER).toBigInteger();
+            BigInteger gasLimitBig = BigInteger.valueOf(gasLimit);
+            RawTransaction rawTransaction = RawTransaction.createEtherTransaction(nonce, gasPriceWei, gasLimitBig, receiverAddress, valueWei);
+            byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
+            String hexValue = Numeric.toHexString(signedMessage);
+            EthSendTransaction ethSendTransaction = web3.ethSendRawTransaction(hexValue).send();
+            return ethSendTransaction;
+        }catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static TransactionReceipt makeBLOCTransaction(Credentials credentials, String address, double gasPrice, int gasLimit, double value){
+        BigInteger gasPriceWei = Convert.toWei(new BigDecimal(gasPrice), Convert.Unit.GWEI).toBigInteger();
+        BigInteger valueWei = Convert.toWei(new BigDecimal(value), Convert.Unit.ETHER).toBigInteger();
+        BigInteger gasLimitBig = BigInteger.valueOf(gasLimit);
+        BlockcloudToken blockcloudToken = BlockcloudToken.load(BLOC_ADDRESS, web3, credentials, gasPriceWei, gasLimitBig);
+        try{
+            TransactionReceipt result = blockcloudToken.transfer(address, valueWei).send();
+            return result;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static String createKeyStore(Context context, String password, String privateKey) {
@@ -125,4 +188,10 @@ public class Utility {
         return null;
     }
 
+    public static boolean checkAddressFormat(String address){
+        Pattern pattern = Pattern.compile("0x[0-9A-Fa-f]{40}");
+
+        Matcher matcher = pattern.matcher(address);
+        return matcher.matches();
+    }
 }

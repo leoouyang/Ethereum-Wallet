@@ -11,8 +11,12 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +27,9 @@ import java.util.Locale;
 
 public class AssetFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "AssetFragment";
+
+    private Animation showAnimation;
+//    private Animation hideAnimation;
 
     protected DrawerLayout drawerLayout;
     protected SwipeRefreshLayout swipeRefreshLayout;
@@ -36,10 +43,20 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
     private LinearLayout receiveLayout;
     private TextView realTotalView;
 
-    private TextView ETHView;
+    private RelativeLayout ethLayout;
+    private TextView ethView;
     private TextView realETHView;
-    private TextView SelfCoinView;
+    private LinearLayout ethButtons;
+    private Button ethMakePay;
+    private Button ethReceivePay;
+
+    private LinearLayout selfCoinContainer;
+    private RelativeLayout selfCoinLayout;
+    private TextView selfCoinView;
     private TextView realSelfCoinView;
+    private LinearLayout selfCoinButtons;
+    private Button selfCoinMakePay;
+    private Button selfCoinReceivePay;
 
     private boolean firstTime;
     @Override
@@ -54,6 +71,9 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_asset, container, false);
 
+        showAnimation = AnimationUtils.loadAnimation(this.getActivity(),R.anim.show);
+//        hideAnimation = AnimationUtils.loadAnimation(this.getActivity(),R.anim.hide);
+
         drawerLayout = view.findViewById(R.id.asset_drawer_layout);
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         swipeRefreshLayout = view.findViewById(R.id.asset_swipe_refresh);
@@ -67,17 +87,33 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
         createAccountLayout = view.findViewById(R.id.asset_side_nav_create_account);
         createAccountLayout.setOnClickListener(this);
 
-
         usernameView = view.findViewById(R.id.asset_username);
         addressView = view.findViewById(R.id.asset_address);
         receiveLayout = view.findViewById(R.id.asset_receive_layout);
         receiveLayout.setOnClickListener(this);
         realTotalView = view.findViewById(R.id.asset_total_real);
 
-        ETHView = view.findViewById(R.id.asset_eth_amount);
+        ethLayout = view.findViewById(R.id.asset_eth_layout);
+        ethLayout.setOnClickListener(this);
+        ethView = view.findViewById(R.id.asset_eth_amount);
         realETHView = view.findViewById(R.id.asset_eth_amount_real);
-        SelfCoinView = view.findViewById(R.id.asset_selfCoin_amount);
+        ethButtons = view.findViewById(R.id.asset_eth_buttons);
+        ethButtons.setVisibility(View.GONE);
+        ethMakePay = view.findViewById(R.id.asset_eth_make_payment);
+        ethMakePay.setOnClickListener(this);
+        ethReceivePay = view.findViewById(R.id.asset_eth_receive_payment);
+        ethReceivePay.setOnClickListener(this);
+
+        selfCoinContainer = view.findViewById(R.id.asset_selfCoin_container);
+        selfCoinLayout = view.findViewById(R.id.asset_selfCoin_layout);
+        selfCoinLayout.setOnClickListener(this);
+        selfCoinView = view.findViewById(R.id.asset_selfCoin_amount);
         realSelfCoinView = view.findViewById(R.id.asset_selfCoin_amount_real);
+        selfCoinButtons = view.findViewById(R.id.asset_selfCoin_buttons);
+        selfCoinMakePay = view.findViewById(R.id.asset_selfCoin_make_payment);
+        selfCoinMakePay.setOnClickListener(this);
+        selfCoinReceivePay = view.findViewById(R.id.asset_selfCoin_receive_payment);
+        selfCoinReceivePay.setOnClickListener(this);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -89,8 +125,8 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        if (AccountManager.getAccountSize() > 0) {
-            AccountManager.setCurAccountIndex(0);
+        if (AccountsManager.getAccountSize() > 0) {
+            AccountsManager.setCurAccountIndex(0);
             refreshDisplay();
             new AssetRefreshTask(this).execute();
         } else {
@@ -109,25 +145,62 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
                     break;
                 case R.id.asset_receive_layout:
                     ReceivePaymentActivity.actionStart(AssetFragment.this.getActivity(),
-                            AccountManager.getCurrentAccount().getAddress());
+                            AccountsManager.getCurrentAccount().getAddress());
                     break;
                 case R.id.asset_side_nav_create_account:
                     CreateWalletActivity.actionStart(this.getActivity());
                     break;
-//                try{
-//                    String fileName = this.getActivity().getFilesDir().getAbsolutePath() + "/" + AccountManager.accounts.get(curAccountIndex).getUsername();
-//                    Log.d(TAG, "onClick: " + fileName);
-//                    File outDir = new File(fileName);
-//                    if (!outDir.exists()){
-//                        outDir.mkdir();
-//                    }
-//                    ECKeyPair keyPair = ECKeyPair.create(new BigInteger(AccountManager.accounts.get(curAccountIndex).getPrivateKey(),16));
-//                    WalletUtils.generateWalletFile("ouyang.823", keyPair, outDir, true);
-//
-////                    WalletUtils.generateFullNewWalletFile("123456", outDir);
-//                }catch (Exception e){
-//                    e.printStackTrace();
-//                }
+                case R.id.asset_eth_layout:
+                    if (ethButtons.getVisibility() == View.VISIBLE){
+                        Animation hideAnimation = AnimationUtils.loadAnimation(this.getActivity(),R.anim.hide);
+                        float ethButtonsHeight = ethButtons.getHeight();
+                        Animation coordinateHideAnimation = new TranslateAnimation(0,0, ethButtonsHeight, 0);
+                        coordinateHideAnimation.setDuration(200);
+                        ethButtons.setVisibility(View.GONE);
+                        selfCoinContainer.startAnimation(coordinateHideAnimation);
+                        ethButtons.startAnimation(hideAnimation);
+                    }else {
+                        ethButtons.setVisibility(View.VISIBLE);
+                        float ethButtonsHeight = ethButtons.getHeight();
+                        Animation coordinateShowAnimation = new TranslateAnimation(0,0, ethButtonsHeight*-1, 0);
+                        coordinateShowAnimation.setDuration(200);
+                        selfCoinContainer.startAnimation(coordinateShowAnimation);
+                        ethButtons.startAnimation(showAnimation);
+                    }
+                    break;
+                case R.id.asset_selfCoin_layout:
+                    if (selfCoinButtons.getVisibility() == View.VISIBLE){
+                        Animation hideAnimation = AnimationUtils.loadAnimation(this.getActivity(),R.anim.hide);
+                        hideAnimation.setAnimationListener(new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {}
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                selfCoinButtons.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {}
+                        });
+                        selfCoinButtons.startAnimation(hideAnimation);
+                    }else {
+                        selfCoinButtons.setVisibility(View.VISIBLE);
+                        selfCoinButtons.startAnimation(showAnimation);
+                    }
+                    break;
+                case R.id.asset_eth_make_payment:
+                    MakePaymentActivity.actionStart(this.getActivity(), MakePaymentActivity.Token.ETH);
+                    break;
+                case R.id.asset_eth_receive_payment:
+                    Toast.makeText(this.getActivity(), "receive payment", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.asset_selfCoin_make_payment:
+                    MakePaymentActivity.actionStart(this.getActivity(), MakePaymentActivity.Token.BLOC);
+                    break;
+                case R.id.asset_selfCoin_receive_payment:
+                    Toast.makeText(this.getActivity(), "BLOC receive payment", Toast.LENGTH_SHORT).show();
+                    break;
                 default:
                     break;
             }
@@ -147,7 +220,7 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
     }
 
     protected void refreshDisplay() {
-        Account curAccount = AccountManager.getCurrentAccount();
+        Account curAccount = AccountsManager.getCurrentAccount();
         usernameView.setText(curAccount.getUsername());
         String address = curAccount.getAddress();
         if (address.length() == 42) {
@@ -162,9 +235,9 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
 
         realTotalView.setText(String.format(Locale.CHINA, "%.2f", realETH + realselfCoin));
 
-        ETHView.setText(String.format(Locale.CHINA, "%.2f", curAccount.getEthereum()));
+        ethView.setText(String.format(Locale.CHINA, "%.2f", curAccount.getEthereum()));
         realETHView.setText(String.format(Locale.CHINA, "%.2f", realETH));
-        SelfCoinView.setText(String.format(Locale.CHINA, "%.2f", curAccount.getSelfCoin()));
+        selfCoinView.setText(String.format(Locale.CHINA, "%.2f", curAccount.getSelfCoin()));
         realSelfCoinView.setText(String.format(Locale.CHINA, "%.2f", realselfCoin));
 
         swipeRefreshLayout.setRefreshing(false);

@@ -16,8 +16,8 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccountManager {
-    private static final String TAG = "AccountManager";
+public class AccountsManager {
+    private static final String TAG = "AccountsManager";
     private static final String accountFilename = "accounts";
     private static List<Account> accounts = new ArrayList<>();
     private static int curAccountIndex = -1;
@@ -97,27 +97,30 @@ public class AccountManager {
 
     static void saveAccounts(Context context) {
         Log.d(TAG, "saveAccounts: " + accounts.toString());
-        FileOutputStream out = null;
-        BufferedWriter writer = null;
-        try {
-            out = context.openFileOutput(accountFilename, context.MODE_PRIVATE);
-            writer = new BufferedWriter(new OutputStreamWriter(out));
-            String accountsJson = new Gson().toJson(accounts, new TypeToken<List<Account>>() {
-            }.getType());
-            writer.write(accountsJson);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
+        if(accounts.size() > 0){
+            FileOutputStream out = null;
+            BufferedWriter writer = null;
             try {
-                if (writer != null) {
-                    writer.close();
-                }
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException e) {
+                out = context.openFileOutput(accountFilename, context.MODE_PRIVATE);
+                writer = new BufferedWriter(new OutputStreamWriter(out));
+                String accountsJson = new Gson().toJson(accounts, new TypeToken<List<Account>>() {
+                }.getType());
+                writer.write(accountsJson);
+            } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                try {
+                    if (writer != null) {
+                        writer.close();
+                    }
+                    if (out != null) {
+                        out.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
+
     }
 }

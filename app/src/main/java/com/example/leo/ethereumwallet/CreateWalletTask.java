@@ -52,16 +52,16 @@ public class CreateWalletTask extends AsyncTask<String, Void, String> {
                 String address = "0x" + tokens[tokens.length - 1].split("\\.")[0];
                 Log.d(TAG, "onPostExecute: " + address);
 
-                if (!AccountManager.checkAddressExisted(address)) {
+                if (!AccountsManager.checkAddressExisted(address)) {
                     Account newAccount = new Account();
                     newAccount.setAddress(address);
                     newAccount.setUsername(walletNameInput);
                     newAccount.setKeystore(createdFileName);
                     Log.d(TAG, "onPostExecute: " + newAccount.toString());
 //                    newAccount.setPrivateKey(credentials.getEcKeyPair().getPrivateKey().toString(16));
-                    AccountManager.appendAccount(newAccount);
-                    AccountManager.setCurAccountIndex(AccountManager.getAccountSize() - 1);
-                    AccountManager.saveAccounts(activity.get());
+                    AccountsManager.appendAccount(newAccount);
+                    AccountsManager.setCurAccountIndex(AccountsManager.getAccountSize() - 1);
+                    AccountsManager.saveAccounts(activity.get());
                     dialog.dismiss();
                     activity.get().finish();
                 } else {

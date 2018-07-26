@@ -50,4 +50,46 @@
     <string name="cny">人民币（￥）</string>
 
     <string name="asset_name">资产名称</string>
+
+    <string name="receive_payment">收款</string>
+
+    <string name="make_payment">转账</string>
+
+    <string name="make_ETH_payment">ETH转账</string>
+
+    <string name="make_BLOC_payment">BLOC转账</string>
+
+    <string name="receiver_wallet_address">收款人钱包地址</string>
+
+    <string name="make_payment_amount">转账金额</string>
+
+    <string name="gas_price">Gas Price</string>
+
+    <string name="gas_limit">Gas Limit</string>
+
+    <string name="next_step">下一步</string>
+
+    <string name="get_latest_gas_price">获取最新</string>
+
+    <string name="gas_price_safe_low">最低费用(&lt;30min)</string>
+
+    <string name="gas_price_standard">平均费用(&lt;5min)</string>
+
+    <string name="gas_price_fastest">最快费用(&lt;2min)</string>
+
+    <string name="transaction_request_success">转账申请已提交</string>
+
+    <string name="wrong_password">密码错误</string>
+
+    <string name="receiver_cannot_be_self">收款人地址不能是自己</string>
+
+    <string name="address_incorrect_format">地址格式错误，应为0x开头的42位地址</string>
+
+    <string name="empty_field_exists">有空没填</string>
+
+    <string name="insufficient_fund">余额不足</string>
+
+    <string name="account_balance">余额</string>
+    
+    <string name="payment_detail">支付详情</string>
 </resources>

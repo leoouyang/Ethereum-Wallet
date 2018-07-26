@@ -29,7 +29,7 @@ public class SideAccountAdapter extends RecyclerView.Adapter {
             @Override
             public void onClick(View view) {
                 int curIndex = holder.getAdapterPosition();
-                AccountManager.setCurAccountIndex(curIndex);
+                AccountsManager.setCurAccountIndex(curIndex);
                 notifyItemChanged(prevIndex);
                 prevIndex = curIndex;
                 notifyItemChanged(curIndex);
@@ -43,10 +43,10 @@ public class SideAccountAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: bind position " + position);
-        Account account = AccountManager.getAccountAtIndex(position);
+        Account account = AccountsManager.getAccountAtIndex(position);
         ((ViewHolder) holder).profilePicture.setImageResource(R.drawable.empty_profile_public);
         ((ViewHolder) holder).username.setText(account.getUsername());
-        if (position == AccountManager.getCurAccountIndex()) {
+        if (position == AccountsManager.getCurAccountIndex()) {
             prevIndex = position;
             ((ViewHolder) holder).accountView.setBackgroundColor(Color.parseColor("#d4d4d4"));
         } else {
@@ -58,7 +58,7 @@ public class SideAccountAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return AccountManager.getAccountSize();
+        return AccountsManager.getAccountSize();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

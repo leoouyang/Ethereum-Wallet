@@ -21,7 +21,8 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".ReceivePaymentActivity" />
         <activity android:name=".CreateWalletActivity" />
-        <activity android:name=".ImportWalletActivity"></activity>
+        <activity android:name=".ImportWalletActivity" />
+        <activity android:name=".MakePaymentActivity"></activity>
     </application>
 
 </manifest>

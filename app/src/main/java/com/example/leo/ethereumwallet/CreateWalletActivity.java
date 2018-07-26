@@ -21,11 +21,6 @@ public class CreateWalletActivity extends AppCompatActivity implements View.OnCl
     private ImageView backButton;
     private TextView create2ImportButton;
 
-    public static void actionStart(Context context) {
-        Intent intent = new Intent(context, CreateWalletActivity.class);
-        context.startActivity(intent);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +52,7 @@ public class CreateWalletActivity extends AppCompatActivity implements View.OnCl
                     Toast.makeText(this, R.string.password_inconsistent, Toast.LENGTH_SHORT).show();
                 } else if (walletNameInput.length() > 12 || walletNameInput.length() < 1) {
                     Toast.makeText(this, R.string.wallet_name_too_long, Toast.LENGTH_SHORT).show();
-                } else if (AccountManager.checkNameExisted(walletNameInput)) {
+                } else if (AccountsManager.checkNameExisted(walletNameInput)) {
                     Toast.makeText(this, R.string.wallet_name_existed, Toast.LENGTH_SHORT).show();
                 } else {
                     new CreateWalletTask(this, walletNameInput, passwordInput).execute((String) null);
@@ -93,8 +88,8 @@ public class CreateWalletActivity extends AppCompatActivity implements View.OnCl
 //                                    newAccount.setUsername(walletNameInput);
 //                                    newAccount.setKeystore(createdFileName);
 ////                                    newAccount.setPrivateKey(credentials.getEcKeyPair().getPrivateKey().toString(16));
-//                                    AccountManager.accounts.add(newAccount);
-//                                    AccountManager.saveAccounts(activity);
+//                                    AccountsManager.accounts.add(newAccount);
+//                                    AccountsManager.saveAccounts(activity);
 //                                    dialog.dismiss();
 //                                    Log.d(TAG, "onClick: " + newAccount.toString());
 //                                    activity.finish();
@@ -120,5 +115,10 @@ public class CreateWalletActivity extends AppCompatActivity implements View.OnCl
             default:
                 break;
         }
+    }
+
+    public static void actionStart(Context context) {
+        Intent intent = new Intent(context, CreateWalletActivity.class);
+        context.startActivity(intent);
     }
 }

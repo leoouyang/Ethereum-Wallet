@@ -18,7 +18,7 @@
             android:layout_alignParentLeft="true"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
-            android:paddingLeft="15dp"
+            android:paddingLeft="10dp"
             android:src="@drawable/ic_back" />
 
         <TextView

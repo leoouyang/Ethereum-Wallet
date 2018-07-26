@@ -59,7 +59,7 @@ public class ImportWalletActivity extends AppCompatActivity implements View.OnCl
                     Toast.makeText(this, R.string.password_inconsistent, Toast.LENGTH_SHORT).show();
                 } else if (walletNameInput.length() > 12 || walletNameInput.length() < 1) {
                     Toast.makeText(this, R.string.wallet_name_too_long, Toast.LENGTH_SHORT).show();
-                } else if (AccountManager.checkNameExisted(walletNameInput)) {
+                } else if (AccountsManager.checkNameExisted(walletNameInput)) {
                     Toast.makeText(this, R.string.wallet_name_existed, Toast.LENGTH_SHORT).show();
                 } else {
                     Log.d(TAG, "onClick: ");
