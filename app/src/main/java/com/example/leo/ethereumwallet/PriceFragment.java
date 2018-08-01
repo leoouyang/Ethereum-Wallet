@@ -5,12 +5,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +19,7 @@ import android.widget.TextView;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PriceFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class PriceFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private static final String TAG = "PriceFragment";
     private float prev_eth2usd;
     private float prev_eth2cny;
@@ -74,23 +72,23 @@ public class PriceFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         this.getActivity().unregisterReceiver(priceRefreshReceiver);
     }
 
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-//        if (!hidden){
-//            Log.d(TAG, "onHiddenChanged: show");
-////            refreshDisplay();
-//        }
-    }
+//    @Override
+//    public void onHiddenChanged(boolean hidden) {
+//        super.onHiddenChanged(hidden);
+////        if (!hidden){
+////            Log.d(TAG, "onHiddenChanged: show");
+//////            refreshDisplay();
+////        }
+//    }
 
-    private void refreshDisplay(){
+    private void refreshDisplay() {
         eth2cnyTextView.setText(String.valueOf(Utility.getEth2cny()));
         eth2usdTextView.setText(String.valueOf(Utility.getEth2usd()));
-        if (Utility.getEth2usd() > prev_eth2usd){
+        if (Utility.getEth2usd() > prev_eth2usd) {
             ethStatusImage.setImageResource(R.drawable.ic_arrow_up);
-        }else if(Utility.getEth2usd() < prev_eth2usd){
+        } else if (Utility.getEth2usd() < prev_eth2usd) {
             ethStatusImage.setImageResource(R.drawable.ic_arrow_down);
-        }else{
+        } else {
             ethStatusImage.setImageResource(R.drawable.ic_equal);
         }
         prev_eth2usd = Utility.getEth2usd();
@@ -121,11 +119,11 @@ public class PriceFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 //        }.execute();
     }
 
-    class PriceRefreshReceiver extends BroadcastReceiver{
+    class PriceRefreshReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             refreshDisplay();
-            if (refreshLayout.isRefreshing()){
+            if (refreshLayout.isRefreshing()) {
                 refreshLayout.setRefreshing(false);
             }
         }

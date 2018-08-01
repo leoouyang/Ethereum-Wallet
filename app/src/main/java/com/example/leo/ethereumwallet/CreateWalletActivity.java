@@ -21,6 +21,11 @@ public class CreateWalletActivity extends AppCompatActivity implements View.OnCl
     private ImageView backButton;
     private TextView create2ImportButton;
 
+    public static void actionStart(Context context) {
+        Intent intent = new Intent(context, CreateWalletActivity.class);
+        context.startActivity(intent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,12 +35,14 @@ public class CreateWalletActivity extends AppCompatActivity implements View.OnCl
         password = findViewById(R.id.create_password);
         passwordDoublecheck = findViewById(R.id.create_password_doublecheck);
         createWalletButton = findViewById(R.id.create_wallet_button);
-        create2ImportButton = findViewById(R.id.create_to_import_button);
-        backButton = findViewById(R.id.create_wallet_return);
-
-        backButton.setOnClickListener(this);
         createWalletButton.setOnClickListener(this);
+        create2ImportButton = findViewById(R.id.create_to_import_button);
         create2ImportButton.setOnClickListener(this);
+
+        backButton = findViewById(R.id.toolbar_return);
+        backButton.setOnClickListener(this);
+        TextView title = findViewById(R.id.toolbar_title);
+        title.setText(R.string.create_new_wallet);
     }
 
     @Override
@@ -106,7 +113,7 @@ public class CreateWalletActivity extends AppCompatActivity implements View.OnCl
 //                    }.execute();
                 }
                 break;
-            case R.id.create_wallet_return:
+            case R.id.toolbar_return:
                 this.finish();
                 break;
             case R.id.create_to_import_button:
@@ -115,10 +122,5 @@ public class CreateWalletActivity extends AppCompatActivity implements View.OnCl
             default:
                 break;
         }
-    }
-
-    public static void actionStart(Context context) {
-        Intent intent = new Intent(context, CreateWalletActivity.class);
-        context.startActivity(intent);
     }
 }

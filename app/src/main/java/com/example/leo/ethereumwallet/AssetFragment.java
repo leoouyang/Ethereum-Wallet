@@ -1,7 +1,14 @@
 package com.example.leo.ethereumwallet;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,23 +27,26 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.qrcode.encoder.QRCode;
+
 import java.util.Locale;
+
+import static android.app.Activity.RESULT_OK;
 
 //import org.ethereum.crypto.ECKey;
 
 
 public class AssetFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "AssetFragment";
-
-    private Animation showAnimation;
-//    private Animation hideAnimation;
-
     protected DrawerLayout drawerLayout;
     protected SwipeRefreshLayout swipeRefreshLayout;
-
+//    private Animation hideAnimation;
     protected Button menuButton;
+    private boolean firstTime;
+    private Animation showAnimation;
     private RecyclerView recyclerView;
     private LinearLayout createAccountLayout;
+    private LinearLayout scanQRLayout;
 
     private TextView usernameView;
     private TextView addressView;
@@ -58,7 +68,6 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
     private Button selfCoinMakePay;
     private Button selfCoinReceivePay;
 
-    private boolean firstTime;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +80,7 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_asset, container, false);
 
-        showAnimation = AnimationUtils.loadAnimation(this.getActivity(),R.anim.show);
+        showAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.show);
 //        hideAnimation = AnimationUtils.loadAnimation(this.getActivity(),R.anim.hide);
 
         drawerLayout = view.findViewById(R.id.asset_drawer_layout);
@@ -86,6 +95,8 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
         recyclerView.getAdapter().notifyDataSetChanged();
         createAccountLayout = view.findViewById(R.id.asset_side_nav_create_account);
         createAccountLayout.setOnClickListener(this);
+        scanQRLayout = view.findViewById(R.id.asset_side_nav_scanQR);
+        scanQRLayout.setOnClickListener(this);
 
         usernameView = view.findViewById(R.id.asset_username);
         addressView = view.findViewById(R.id.asset_address);
@@ -114,21 +125,25 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
         selfCoinMakePay.setOnClickListener(this);
         selfCoinReceivePay = view.findViewById(R.id.asset_selfCoin_receive_payment);
         selfCoinReceivePay.setOnClickListener(this);
-
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-//                AssetFragment.this.getActivity().getWindow().setFlags(
-//                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                new AssetRefreshTask(AssetFragment.this).execute();
-//                refreshAccount(curAccountIndex);
+                if (!AssetRefreshTask.refreshing) {
+                    new AssetRefreshTask(AssetFragment.this, true).execute();
+                }
             }
         });
 
+//        if (AccountsManager.getAccountSize() == 0){
+//            AccountsManager.loadAccounts(this.getActivity());
+//        }
+
         if (AccountsManager.getAccountSize() > 0) {
-            AccountsManager.setCurAccountIndex(0);
-            refreshDisplay();
-            new AssetRefreshTask(this).execute();
+            if (!AssetRefreshTask.refreshing) {
+                AccountsManager.setCurAccountIndex(0);
+                refreshDisplay();
+                new AssetRefreshTask(this, true).execute();
+            }
         } else {
             Log.d(TAG, "onCreateView: Empty accounts list");
         }
@@ -151,29 +166,30 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
                     CreateWalletActivity.actionStart(this.getActivity());
                     break;
                 case R.id.asset_eth_layout:
-                    if (ethButtons.getVisibility() == View.VISIBLE){
-                        Animation hideAnimation = AnimationUtils.loadAnimation(this.getActivity(),R.anim.hide);
+                    if (ethButtons.getVisibility() == View.VISIBLE) {
+                        Animation hideAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.hide);
                         float ethButtonsHeight = ethButtons.getHeight();
-                        Animation coordinateHideAnimation = new TranslateAnimation(0,0, ethButtonsHeight, 0);
+                        Animation coordinateHideAnimation = new TranslateAnimation(0, 0, ethButtonsHeight, 0);
                         coordinateHideAnimation.setDuration(200);
                         ethButtons.setVisibility(View.GONE);
                         selfCoinContainer.startAnimation(coordinateHideAnimation);
                         ethButtons.startAnimation(hideAnimation);
-                    }else {
+                    } else {
                         ethButtons.setVisibility(View.VISIBLE);
                         float ethButtonsHeight = ethButtons.getHeight();
-                        Animation coordinateShowAnimation = new TranslateAnimation(0,0, ethButtonsHeight*-1, 0);
+                        Animation coordinateShowAnimation = new TranslateAnimation(0, 0, ethButtonsHeight * -1, 0);
                         coordinateShowAnimation.setDuration(200);
                         selfCoinContainer.startAnimation(coordinateShowAnimation);
                         ethButtons.startAnimation(showAnimation);
                     }
                     break;
                 case R.id.asset_selfCoin_layout:
-                    if (selfCoinButtons.getVisibility() == View.VISIBLE){
-                        Animation hideAnimation = AnimationUtils.loadAnimation(this.getActivity(),R.anim.hide);
+                    if (selfCoinButtons.getVisibility() == View.VISIBLE) {
+                        Animation hideAnimation = AnimationUtils.loadAnimation(this.getActivity(), R.anim.hide);
                         hideAnimation.setAnimationListener(new Animation.AnimationListener() {
                             @Override
-                            public void onAnimationStart(Animation animation) {}
+                            public void onAnimationStart(Animation animation) {
+                            }
 
                             @Override
                             public void onAnimationEnd(Animation animation) {
@@ -181,10 +197,11 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
                             }
 
                             @Override
-                            public void onAnimationRepeat(Animation animation) {}
+                            public void onAnimationRepeat(Animation animation) {
+                            }
                         });
                         selfCoinButtons.startAnimation(hideAnimation);
-                    }else {
+                    } else {
                         selfCoinButtons.setVisibility(View.VISIBLE);
                         selfCoinButtons.startAnimation(showAnimation);
                     }
@@ -201,6 +218,15 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
                 case R.id.asset_selfCoin_receive_payment:
                     Toast.makeText(this.getActivity(), "BLOC receive payment", Toast.LENGTH_SHORT).show();
                     break;
+                case R.id.asset_side_nav_scanQR:
+                    if (ContextCompat.checkSelfPermission(this.getActivity(),
+                            Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+                        requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
+                    }else{
+                            Intent intent = new Intent(this.getActivity(), ScanQRActivity.class);
+                            startActivityForResult(intent, 1);
+                    }
+                    break;
                 default:
                     break;
             }
@@ -208,14 +234,38 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if(!firstTime){
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: ");
+        if (!firstTime && !AssetRefreshTask.refreshing) {
             recyclerView.getAdapter().notifyDataSetChanged();
             refreshDisplay();
-            new AssetRefreshTask(this).execute();
-        }else{
+            new AssetRefreshTask(this, false).execute();
+        } else {
             firstTime = false;
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.d(TAG, "onRequestPermissionsResult: " + requestCode);
+        if (requestCode == 1){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Intent intent = new Intent(this.getActivity(), ScanQRActivity.class);
+                startActivityForResult(intent, 1);
+            }else{
+                Toast.makeText(this.getActivity(), R.string.camera_permission_required, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case 1:
+                if (resultCode == RESULT_OK){
+                    MakePaymentActivity.actionStart(this.getActivity(), MakePaymentActivity.Token.ETH, data.getStringExtra("receiver_address"));
+                }
+                break;
         }
     }
 

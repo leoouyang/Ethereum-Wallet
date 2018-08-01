@@ -16,7 +16,6 @@ import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.core.DefaultBlockParameterName;
-import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
@@ -24,7 +23,6 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.ReadonlyTransactionManager;
 import org.web3j.tx.TransactionManager;
-import org.web3j.tx.Transfer;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
 
@@ -35,7 +33,6 @@ import java.math.BigInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import okhttp3.Address;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -46,10 +43,10 @@ public class Utility {
     private static final String INFURA_ADDRESS = "https://ropsten.infura.io/";
     private static final String INFURA_TOKEN = "LaSYLIXhaLNU6l2t5zXZ";
     private static final String NODE = "http://192.168.31.246:8545";
-        private static final String BLOC_ADDRESS = "0x097544cCc24766afF1BF3a78a219C8e1E304Be14";
+    private static final String BLOC_ADDRESS = "0x097544cCc24766afF1BF3a78a219C8e1E304Be14";
     private static final String TAG = "Utility";
-    private static final Web3j web3 = Web3jFactory.build(new HttpService(NODE));
-//    private static final Web3j web3 = Web3jFactory.build(new HttpService(INFURA_ADDRESS + INFURA_TOKEN));
+//    private static final Web3j web3 = Web3jFactory.build(new HttpService(NODE));
+    private static final Web3j web3 = Web3jFactory.build(new HttpService(INFURA_ADDRESS + INFURA_TOKEN));
 
     private static volatile float eth2usd = 0;
     private static volatile float eth2cny = 0;
@@ -63,14 +60,13 @@ public class Utility {
     }
 
 
-
-    public static void loadExchangeRates(Context context){
+    public static void loadExchangeRates(Context context) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         eth2usd = pref.getFloat("eth2usd", 0);
         eth2cny = pref.getFloat("eth2cny", 0);
     }
 
-    public static void saveExchangeRates(Context context){
+    public static void saveExchangeRates(Context context) {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         editor.putFloat("eth2usd", eth2usd);
         editor.putFloat("eth2cny", eth2cny);
@@ -83,7 +79,7 @@ public class Utility {
             Log.d(TAG, "getEtherBalance: " + address);
             EthGetBalance ethGetBalance = web3.ethGetBalance(address, DefaultBlockParameterName.LATEST).send();
             BigInteger weiBalance = ethGetBalance.getBalance();
-            BigDecimal etherBalance = Convert.fromWei(new BigDecimal(weiBalance),Convert.Unit.ETHER);
+            BigDecimal etherBalance = Convert.fromWei(new BigDecimal(weiBalance), Convert.Unit.ETHER);
 //            BigDecimal etherBalance = new BigDecimal(weiBalance).divide(ETHER2WEI, RoundingMode.HALF_UP);
             Log.d(TAG, "getEtherBalance: " + etherBalance.doubleValue());
             return etherBalance.doubleValue();
@@ -102,8 +98,8 @@ public class Utility {
             Response response = client.newCall(request).execute();
             String reseponseData = response.body().string();
             JSONObject jsonObject = new JSONObject(reseponseData);
-            eth2usd = (float)jsonObject.getDouble("USD");
-            eth2cny = (float)jsonObject.getDouble("CNY");
+            eth2usd = (float) jsonObject.getDouble("USD");
+            eth2cny = (float) jsonObject.getDouble("CNY");
 
             Intent intent = new Intent(REFRESH_PRICE_SIGNAL);
             context.sendBroadcast(intent);
@@ -114,16 +110,16 @@ public class Utility {
         }
     }
 
-    public static double getBlocBalance(String address){
+    public static double getBlocBalance(String address) {
         //todo
         TransactionManager transactionManager = new ReadonlyTransactionManager(web3, address);
-        BlockcloudToken blockcloudToken = BlockcloudToken.load(BLOC_ADDRESS, web3, transactionManager, BigInteger.valueOf(0),BigInteger.valueOf(0));
-        try{
+        BlockcloudToken blockcloudToken = BlockcloudToken.load(BLOC_ADDRESS, web3, transactionManager, BigInteger.valueOf(0), BigInteger.valueOf(0));
+        try {
             BigInteger result = blockcloudToken.balanceOf(AccountsManager.getCurrentAccount().getAddress()).send();
-            BigDecimal blocBalance = Convert.fromWei(new BigDecimal(result),Convert.Unit.ETHER);
+            BigDecimal blocBalance = Convert.fromWei(new BigDecimal(result), Convert.Unit.ETHER);
             Log.d(TAG, "getBlocBalance: " + blocBalance.doubleValue());
             return blocBalance.doubleValue();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return -1.0;
@@ -133,11 +129,11 @@ public class Utility {
         return context.getFilesDir().getAbsolutePath() + "/keystore";
     }
 
-    public static EthSendTransaction makeETHTransaction(Credentials credentials, String receiverAddress, double gasPrice, int gasLimit, double value){
+    public static EthSendTransaction makeETHTransaction(Credentials credentials, String receiverAddress, double gasPrice, int gasLimit, double value) {
         try {
             EthGetTransactionCount ethGetTransactionCount = web3.ethGetTransactionCount(credentials.getAddress(), DefaultBlockParameterName.LATEST).send();
             BigInteger nonce = ethGetTransactionCount.getTransactionCount();
-            Log.d(TAG, "makeETHTransaction: nonce is "+ nonce);
+            Log.d(TAG, "makeETHTransaction: nonce is " + nonce);
             BigInteger gasPriceWei = Convert.toWei(new BigDecimal(gasPrice), Convert.Unit.GWEI).toBigInteger();
             BigInteger valueWei = Convert.toWei(new BigDecimal(value), Convert.Unit.ETHER).toBigInteger();
             BigInteger gasLimitBig = BigInteger.valueOf(gasLimit);
@@ -146,21 +142,23 @@ public class Utility {
             String hexValue = Numeric.toHexString(signedMessage);
             EthSendTransaction ethSendTransaction = web3.ethSendRawTransaction(hexValue).send();
             return ethSendTransaction;
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public static TransactionReceipt makeBLOCTransaction(Credentials credentials, String address, double gasPrice, int gasLimit, double value){
+    public static TransactionReceipt makeBLOCTransaction(Credentials credentials, String address, double gasPrice, int gasLimit, double value) throws RuntimeException {
         BigInteger gasPriceWei = Convert.toWei(new BigDecimal(gasPrice), Convert.Unit.GWEI).toBigInteger();
         BigInteger valueWei = Convert.toWei(new BigDecimal(value), Convert.Unit.ETHER).toBigInteger();
         BigInteger gasLimitBig = BigInteger.valueOf(gasLimit);
         BlockcloudToken blockcloudToken = BlockcloudToken.load(BLOC_ADDRESS, web3, credentials, gasPriceWei, gasLimitBig);
-        try{
+        try {
             TransactionReceipt result = blockcloudToken.transfer(address, valueWei).send();
             return result;
-        }catch (Exception e){
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -188,10 +186,19 @@ public class Utility {
         return null;
     }
 
-    public static boolean checkAddressFormat(String address){
-        Pattern pattern = Pattern.compile("0x[0-9A-Fa-f]{40}");
-
-        Matcher matcher = pattern.matcher(address);
-        return matcher.matches();
+    public static String formatAddress(String address) {
+        Pattern pattern1 = Pattern.compile("0x[0-9A-Fa-f]{40}");
+        Matcher matcher1 = pattern1.matcher(address);
+        if (matcher1.matches()){
+            return address;
+        }else{
+            Pattern pattern2 = Pattern.compile("[0-9A-Fa-f]{40}");
+            Matcher matcher2 = pattern2.matcher(address);
+            if (matcher2.matches()){
+                return "0x" + address;
+            }else{
+                return null;
+            }
+        }
     }
 }

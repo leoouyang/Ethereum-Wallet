@@ -85,9 +85,6 @@ public class MainActivity extends AppCompatActivity {
 //        AccountsManager.saveAccounts(this);
 //        AccountsManager.loadAccounts(this);
         Utility.loadExchangeRates(this);
-        if (AccountsManager.getAccountSize() == 0){
-            AccountsManager.loadAccounts(this);
-        }
         initFragment();
     }
 
@@ -122,16 +119,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         AccountsManager.saveAccounts(this);
         Utility.saveExchangeRates(this);
     }
 
-    @Override
-    protected void onDestroy() {
+//    @Override
+//    protected void onDestroy() {
 //        Utility.web3.shutdown();
 //        AccountsManager.saveAccounts(this);
-        super.onDestroy();
-    }
+//        super.onDestroy();
+//    }
 }

@@ -27,17 +27,17 @@ public class AccountsManager {
     }
 
     public static void setCurAccountIndex(int index) {
-        if (index < 0 || index >= accounts.size()){
+        if (index < 0 || index >= accounts.size()) {
             index = 0;
         }
         curAccountIndex = index;
     }
 
-    public static Account getAccountAtIndex(int position){
+    public static Account getAccountAtIndex(int position) {
         return accounts.get(position);
     }
 
-    public static boolean checkNameExisted(String name){
+    public static boolean checkNameExisted(String name) {
         for (Account account : accounts) {
             if (account.getUsername().equals(name)) {
                 return true;
@@ -46,7 +46,7 @@ public class AccountsManager {
         return false;
     }
 
-    public static boolean checkAddressExisted(String address){
+    public static boolean checkAddressExisted(String address) {
         for (Account account : accounts) {
             if (account.getAddress().equals(address)) {
                 return true;
@@ -55,15 +55,15 @@ public class AccountsManager {
         return false;
     }
 
-    public static int getAccountSize(){
+    public static int getAccountSize() {
         return accounts.size();
     }
 
-    public static Account getCurrentAccount(){
+    public static Account getCurrentAccount() {
         return accounts.get(curAccountIndex);
     }
 
-    public static void appendAccount(Account account){
+    public static void appendAccount(Account account) {
         accounts.add(account);
     }
 
@@ -97,11 +97,11 @@ public class AccountsManager {
 
     static void saveAccounts(Context context) {
         Log.d(TAG, "saveAccounts: " + accounts.toString());
-        if(accounts.size() > 0){
+        if (accounts.size() > 0) {
             FileOutputStream out = null;
             BufferedWriter writer = null;
             try {
-                out = context.openFileOutput(accountFilename, context.MODE_PRIVATE);
+                out = context.openFileOutput(accountFilename, Context.MODE_PRIVATE);
                 writer = new BufferedWriter(new OutputStreamWriter(out));
                 String accountsJson = new Gson().toJson(accounts, new TypeToken<List<Account>>() {
                 }.getType());

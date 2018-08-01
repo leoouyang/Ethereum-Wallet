@@ -7,12 +7,13 @@ import android.widget.Toast;
 
 public class StartActivity extends AppCompatActivity {
     private static final String TAG = "StartActivity";
-    private boolean firstTime;
-    
+
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");
     }
+
+    private boolean firstTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +37,11 @@ public class StartActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if(AccountsManager.getAccountSize() > 0){
+        if (AccountsManager.getAccountSize() > 0) {
             Intent i = new Intent(this, MainActivity.class);
             startActivity(i);
             finish();
-        }else{
+        } else {
             Toast.makeText(this, R.string.wallet_needed, Toast.LENGTH_SHORT).show();
             CreateWalletActivity.actionStart(this);
         }

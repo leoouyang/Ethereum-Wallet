@@ -28,13 +28,15 @@ public class SideAccountAdapter extends RecyclerView.Adapter {
         holder.accountView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int curIndex = holder.getAdapterPosition();
-                AccountsManager.setCurAccountIndex(curIndex);
-                notifyItemChanged(prevIndex);
-                prevIndex = curIndex;
-                notifyItemChanged(curIndex);
-                assetFragment.refreshDisplay();
-                new AssetRefreshTask(assetFragment).execute();
+                if (!AssetRefreshTask.refreshing) {
+                    int curIndex = holder.getAdapterPosition();
+                    AccountsManager.setCurAccountIndex(curIndex);
+                    notifyItemChanged(prevIndex);
+                    prevIndex = curIndex;
+                    notifyItemChanged(curIndex);
+                    assetFragment.refreshDisplay();
+                    new AssetRefreshTask(assetFragment, true).execute();
+                }
             }
         });
         return holder;
@@ -53,7 +55,6 @@ public class SideAccountAdapter extends RecyclerView.Adapter {
             ((ViewHolder) holder).accountView.setBackgroundColor(Color.parseColor("#ffffff"));
         }
     }
-
 
 
     @Override

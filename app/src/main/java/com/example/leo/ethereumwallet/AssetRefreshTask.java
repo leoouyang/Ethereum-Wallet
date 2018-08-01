@@ -7,15 +7,19 @@ import android.widget.Toast;
 
 public class AssetRefreshTask extends AsyncTask<Void, Void, Double[]> {
     private static final String TAG = "AssetRefreshTask";
+    public static boolean refreshing = false;
 
     private AssetFragment assetFragment;
     private String address;
     private Account curAccount;
+    private boolean refreshExchange;
 
-    public AssetRefreshTask(AssetFragment assetFragment) {
+    public AssetRefreshTask(AssetFragment assetFragment, boolean refreshExchange) {
+        AssetRefreshTask.refreshing = true;
         Log.d(TAG, "AssetRefreshTask: Using refresh task");
         this.assetFragment = assetFragment;
         curAccount = AccountsManager.getCurrentAccount();
+        this.refreshExchange = refreshExchange;
     }
 
     @Override
@@ -28,7 +32,9 @@ public class AssetRefreshTask extends AsyncTask<Void, Void, Double[]> {
 
     @Override
     protected Double[] doInBackground(Void... voids) {
-        Utility.getEtherExchangeRate(assetFragment.getActivity());
+        if (refreshExchange){
+            Utility.getEtherExchangeRate(assetFragment.getActivity());
+        }
         double ethAmount = Utility.getEtherBalance(address);
         double blocAmount = Utility.getBlocBalance(address);
 
@@ -50,13 +56,15 @@ public class AssetRefreshTask extends AsyncTask<Void, Void, Double[]> {
             curAccount.setSelfCoin(blocAmount);
             refresh = true;
         }
-        if (refresh){
+        if (refresh) {
             assetFragment.refreshDisplay();
-        }else{
+        } else {
             assetFragment.swipeRefreshLayout.setRefreshing(false);
             assetFragment.menuButton.setClickable(true);
             Toast.makeText(assetFragment.getActivity(), "Failed to Refresh", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "refreshAccount: Failed");
         }
+
+        AssetRefreshTask.refreshing = false;
     }
 }

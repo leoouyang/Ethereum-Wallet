@@ -90,6 +90,21 @@
     <string name="insufficient_fund">余额不足</string>
 
     <string name="account_balance">余额</string>
-    
+
     <string name="payment_detail">支付详情</string>
+
+    <string name="to_address">转入地址</string>
+
+    <string name="from_address">付款钱包</string>
+
+    <string name="miner_fee">矿工费用</string>
+
+    <string name="transaction_type">交易类型</string>
+
+    <string name="unknown_error">未知错误</string>
+
+    <string name="transaction_in_progress">交易中，请耐心等待</string>
+
+    <string name="camera_permission_required">需要相机权限以继续</string>
+
 </resources>
