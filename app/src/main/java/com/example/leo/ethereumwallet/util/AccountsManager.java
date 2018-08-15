@@ -1,8 +1,10 @@
-package com.example.leo.ethereumwallet;
+package com.example.leo.ethereumwallet.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
+import com.example.leo.ethereumwallet.gson.Account;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -17,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AccountsManager {
+
+    public static String ACCOUNTS_CHANGE_SIGNAL = "com.example.leo.ethereumwallet.PRICE_REFRESHED";
+
     private static final String TAG = "AccountsManager";
     private static final String accountFilename = "accounts";
     private static List<Account> accounts = new ArrayList<>();
@@ -59,15 +64,24 @@ public class AccountsManager {
         return accounts.size();
     }
 
-    public static Account getCurrentAccount() {
+    public static Account getCurAccount() {
         return accounts.get(curAccountIndex);
     }
 
     public static void appendAccount(Account account) {
         accounts.add(account);
+//        context.sendBroadcast(new Intent(ACCOUNTS_CHANGE_SIGNAL));
     }
 
-    static void loadAccounts(Context context) {
+    public static void deleteAccount(Account account) {
+        accounts.remove(account);
+        if (curAccountIndex >= accounts.size()){
+            curAccountIndex = accounts.size()-1;
+        }
+//        context.sendBroadcast(new Intent(ACCOUNTS_CHANGE_SIGNAL));
+    }
+
+    public static void loadAccounts(Context context) {
         FileInputStream in = null;
         BufferedReader reader = null;
         try {
@@ -95,7 +109,7 @@ public class AccountsManager {
         }
     }
 
-    static void saveAccounts(Context context) {
+    public static void saveAccounts(Context context) {
         Log.d(TAG, "saveAccounts: " + accounts.toString());
         if (accounts.size() > 0) {
             FileOutputStream out = null;

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/transact_hist_item_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/transact_hist_item_icon"
+            android:layout_centerVertical="true"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"/>
+        <!--android:src="@drawable/ic_bloc"/>-->
+
+        <LinearLayout
+            android:id="@+id/transact_hist_item_text_center"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/transact_hist_item_icon"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_centerVertical="true">
+
+            <TextView
+                android:id="@+id/transact_hist_item_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"/>
+            <!--android:text="0x1235e...1039e82"/>-->
+
+            <TextView
+                android:id="@+id/transact_hist_item_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#999"
+                android:textSize="13sp"/>
+            <!--android:text="2018-08-07"/>-->
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/transact_hist_item_sign"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/transact_hist_item_amount"
+            android:layout_centerVertical="true"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="15sp"/>
+        <!--android:text="+" />-->
+
+        <TextView
+            android:id="@+id/transact_hist_item_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@id/transact_hist_item_unit"
+            android:layout_centerVertical="true"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="15sp"/>
+        <!--android:text="12.1342"/>-->
+
+        <TextView
+            android:id="@+id/transact_hist_item_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="15sp"/>
+        <!--android:text="BLOC"/>-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#f0f0f0"
+            android:layout_below="@id/transact_hist_item_text_center"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/transact_hist_item_special"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/transact_hist_item_special_progressBar"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/transact_hist_item_special_text"
+            android:layout_marginLeft="5dp"
+            android:minHeight="5dp"
+            android:minWidth="5dp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/transact_hist_item_special_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:textSize="16sp"
+            android:text="@string/no_more_transact_hist"/>
+
+    </RelativeLayout>
+
+
+</FrameLayout>

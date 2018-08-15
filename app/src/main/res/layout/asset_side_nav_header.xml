@@ -17,7 +17,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/empty_profile_public" />
+            android:src="@drawable/js_components_images_walletavatar" />
 
         <TextView
             android:id="@+id/asset_side_nav_username"

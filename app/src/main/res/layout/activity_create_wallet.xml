@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#fff"
     android:orientation="vertical"
-    tools:context=".CreateWalletActivity">
+    tools:context=".activity.CreateWalletActivity">
 
     <include layout = "@layout/toolbar"/>
     <!--<RelativeLayout-->
@@ -82,6 +82,7 @@
         android:layout_marginTop="15dp"
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
+        android:focusable="true"
         android:text="@string/import_wallet"
         android:textColor="@color/colorPrimary" />
 

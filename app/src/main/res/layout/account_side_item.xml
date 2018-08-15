@@ -9,7 +9,7 @@
         android:id="@+id/asset_side_nav_image"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_vertical" />
 
     <TextView
         android:id="@+id/asset_side_nav_username"
@@ -18,5 +18,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="15dp"
         android:textSize="20sp" />
+
+
 
 </LinearLayout>

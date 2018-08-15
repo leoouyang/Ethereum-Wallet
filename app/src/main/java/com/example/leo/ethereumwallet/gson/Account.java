@@ -1,20 +1,14 @@
-package com.example.leo.ethereumwallet;
+package com.example.leo.ethereumwallet.gson;
+
+import java.math.BigDecimal;
 
 public class Account {
     //    private String privateKey;
     private String keystore;
     private String address;
     private String username;
-    private double ethereum = 0.0;
-    private double selfCoin = 0.0;
-
-//    public String getPrivateKey() {
-//        return privateKey;
-//    }
-
-//    public void setPrivateKey(String privateKey) {
-//        this.privateKey = privateKey;
-//    }
+    private BigDecimal ethereum = new BigDecimal(0);
+    private BigDecimal selfCoin = new BigDecimal(0);
 
     public String getKeystore() {
         return keystore;
@@ -40,19 +34,19 @@ public class Account {
         this.username = username;
     }
 
-    public double getEthereum() {
+    public BigDecimal getEthereum() {
         return ethereum;
     }
 
-    public void setEthereum(double ethereum) {
+    public void setEthereum(BigDecimal ethereum) {
         this.ethereum = ethereum;
     }
 
-    public double getSelfCoin() {
+    public BigDecimal getSelfCoin() {
         return selfCoin;
     }
 
-    public void setSelfCoin(double selfCoin) {
+    public void setSelfCoin(BigDecimal selfCoin) {
         this.selfCoin = selfCoin;
     }
 
@@ -61,8 +55,6 @@ public class Account {
         StringBuilder builder = new StringBuilder();
         builder.append("Address: ")
                 .append(getAddress())
-//                .append("Private Key: ")
-//                .append(getPrivateKey())
                 .append("Name: ")
                 .append(getUsername())
                 .append("Keystore: ")

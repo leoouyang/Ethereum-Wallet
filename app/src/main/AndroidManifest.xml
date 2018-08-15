@@ -10,22 +10,38 @@
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:resizeableActivity="false"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".StartActivity">
+        <activity android:name=".activity.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".ReceivePaymentActivity" />
-        <activity android:name=".CreateWalletActivity" />
-        <activity android:name=".ImportWalletActivity" />
-        <activity android:name=".MakePaymentActivity" />
-        <activity android:name=".ScanQRActivity"></activity>
+        <activity
+            android:name=".activity.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ReceivePaymentActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.CreateWalletActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ImportWalletActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.MakePaymentActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ScanQRActivity"
+            android:screenOrientation="portrait" />
+        <!--<activity android:name=".activity.LifeCycleTestActivity" />-->
+        <activity android:name=".activity.TransactionHistoryActivity" />
+        <activity android:name=".activity.TransactHistDetailActivity"></activity>
     </application>
 
 </manifest>

@@ -1,8 +1,15 @@
-package com.example.leo.ethereumwallet;
+package com.example.leo.ethereumwallet.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -14,9 +21,16 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.leo.ethereumwallet.util.AccountsManager;
+import com.example.leo.ethereumwallet.fragment.MakePaymentDialogFragment;
+import com.example.leo.ethereumwallet.R;
+import com.example.leo.ethereumwallet.util.Utility;
+import com.example.leo.ethereumwallet.gson.Account;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.Locale;
 
 import okhttp3.OkHttpClient;
@@ -24,11 +38,16 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class MakePaymentActivity extends AppCompatActivity implements View.OnClickListener {
+    public enum Token {
+        ETH, BLOC
+    }
+
     private static final String TAG = "MakePaymentActivity";
     private Account senderAccount;
     private boolean gasPriceRefreshing;
     private Token token;
-    private double accountBalance;
+    private BigDecimal accountBalance;
+
     private EditText receiverAddressInput;
     private EditText amountInput;
     private TextView accountBalanceTextView;
@@ -36,6 +55,7 @@ public class MakePaymentActivity extends AppCompatActivity implements View.OnCli
     private Button refreshGasPrice;
     private EditText gasLimitInput;
     private Button makePaymentButton;
+
     private ProgressBar progressBar;
     private TableLayout gasPriceTable;
     private TextView lowGasPrice;
@@ -60,7 +80,7 @@ public class MakePaymentActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_make_payment);
 
-        senderAccount = AccountsManager.getCurrentAccount();
+        senderAccount = AccountsManager.getCurAccount();
         gasPriceRefreshing = false;
         Intent intent = getIntent();
         this.token = (Token) intent.getSerializableExtra("token");
@@ -68,6 +88,8 @@ public class MakePaymentActivity extends AppCompatActivity implements View.OnCli
         TextView title = findViewById(R.id.toolbar_title);
         ImageView backButton = findViewById(R.id.toolbar_return);
         backButton.setOnClickListener(this);
+        ImageView scanQR = findViewById(R.id.make_payment_scanQR);
+        scanQR.setOnClickListener(this);
 
         receiverAddressInput = findViewById(R.id.make_payment_address);
         amountInput = findViewById(R.id.make_payment_amount);
@@ -86,7 +108,7 @@ public class MakePaymentActivity extends AppCompatActivity implements View.OnCli
         highGasPrice = findViewById(R.id.make_payment_high_gas_price);
 
         String address = intent.getStringExtra("address");
-        if (address != null){
+        if (address != null) {
             receiverAddressInput.setText(intent.getStringExtra("address"));
         }
 
@@ -95,7 +117,7 @@ public class MakePaymentActivity extends AppCompatActivity implements View.OnCli
                 title.setText(R.string.make_ETH_payment);
                 accountBalance = senderAccount.getEthereum();
                 accountBalanceTextView.setText(String.format(Locale.CHINA, "%.4f", accountBalance));
-                gasLimitInput.setText("21000");
+                gasLimitInput.setText("22000");
                 break;
             case BLOC:
                 accountBalance = senderAccount.getSelfCoin();
@@ -103,6 +125,13 @@ public class MakePaymentActivity extends AppCompatActivity implements View.OnCli
                 title.setText(R.string.make_BLOC_payment);
                 gasLimitInput.setText("200000");
                 break;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            View decorView = getWindow().getDecorView();
+            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            getWindow().setStatusBarColor(Color.parseColor("#30000000"));
         }
     }
 
@@ -165,28 +194,50 @@ public class MakePaymentActivity extends AppCompatActivity implements View.OnCli
                         gasLimitString.length() == 0 || valueString.length() == 0) {
                     Toast.makeText(this, R.string.empty_field_exists, Toast.LENGTH_SHORT).show();
                     return;
+                }else if(gasPriceString.matches("\\.") || valueString.matches("\\.")){
+                    Toast.makeText(this, R.string.only_dot_invalid_input, Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
-                double gasPrice = Double.parseDouble(gasPriceInput.getText().toString());
-                int gasLimit = Integer.parseInt(gasLimitInput.getText().toString());
-                double value = Double.parseDouble(amountInput.getText().toString());
-                Log.d(TAG, "onClick: gas in ether: " + Math.pow(10, -9) * gasLimit * gasPrice);
+                if (gasPriceString.matches("\\.[0-9]+")){
+                    gasPriceString = "0"+gasPriceString;
+                }
+                if (valueString.matches("\\.[0-9]+")){
+                    valueString = "0"+valueString;
+                }
+
+                BigDecimal gasPrice = new BigDecimal(gasPriceString);
+                int gasLimit = Integer.parseInt(gasLimitString);
+                BigDecimal value =new BigDecimal(valueString);
+
+                Log.d(TAG, "onClick: gas in ether: " + Math.pow(10, -9) * gasLimit * gasPrice.doubleValue());
 
                 address = Utility.formatAddress(address);
+                Log.d(TAG, String.format("onClick: %f", value.add(gasPrice.multiply(new BigDecimal(Math.pow(10, -9) * gasLimit)))));
                 if (address == null) {
                     Toast.makeText(this, R.string.address_incorrect_format, Toast.LENGTH_SHORT).show();
                 } else if (address.equals(senderAccount.getAddress())) {
                     Toast.makeText(this, R.string.receiver_cannot_be_self, Toast.LENGTH_SHORT).show();
-                } else if (value > accountBalance + Math.pow(10, -9) * gasLimit * gasPrice) {
+                } else if ( value.add(gasPrice.multiply(new BigDecimal(Math.pow(10, -9) * gasLimit))).compareTo(accountBalance) > 0) {
+//                   value  + Math.pow(10, -9) * gasLimit * gasPrice  > accountBalance
                     Toast.makeText(this, R.string.insufficient_fund, Toast.LENGTH_SHORT).show();
                 } else {
-                    MakePaymentDialogFragment makePaymentDialogFragment = MakePaymentDialogFragment.newInstance(token, address, gasPrice, gasLimit, value);
+                    MakePaymentDialogFragment makePaymentDialogFragment = MakePaymentDialogFragment.newInstance(token, address, gasPriceString, gasLimit, valueString);
                     makePaymentDialogFragment.show(getSupportFragmentManager(), "make payment bottom sheet dialog");
                 }
 //                makePayment();
                 break;
             case R.id.toolbar_return:
                 finish();
+                break;
+            case R.id.make_payment_scanQR:
+                if (ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 1);
+                }else{
+                    Intent intent = new Intent(this, ScanQRActivity.class);
+                    startActivityForResult(intent, 1);
+                }
                 break;
             default:
                 break;
@@ -214,7 +265,27 @@ public class MakePaymentActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
-    public enum Token {
-        ETH, BLOC
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.d(TAG, "onRequestPermissionsResult: " + requestCode);
+        if (requestCode == 1){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Intent intent = new Intent(this, ScanQRActivity.class);
+                startActivityForResult(intent, 1);
+            }else{
+                Toast.makeText(this, R.string.camera_permission_required, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case 1:
+                if (resultCode == RESULT_OK){
+                    receiverAddressInput.setText(data.getStringExtra("receiver_address"));
+                }
+                break;
+        }
     }
 }

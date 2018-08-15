@@ -1,7 +1,9 @@
-package com.example.leo.ethereumwallet;
+package com.example.leo.ethereumwallet.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -11,6 +13,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.leo.ethereumwallet.util.AccountsManager;
+import com.example.leo.ethereumwallet.asyncTask.CreateWalletTask;
+import com.example.leo.ethereumwallet.R;
 
 public class ImportWalletActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -45,6 +51,12 @@ public class ImportWalletActivity extends AppCompatActivity implements View.OnCl
         TextView title = findViewById(R.id.toolbar_title);
         title.setText(R.string.import_wallet);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            View decorView = getWindow().getDecorView();
+            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            getWindow().setStatusBarColor(Color.parseColor("#30000000"));
+        }
     }
 
     @Override

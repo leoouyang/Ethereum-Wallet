@@ -1,4 +1,4 @@
-package com.example.leo.ethereumwallet;
+package com.example.leo.ethereumwallet.util;
 
 import org.web3j.abi.EventEncoder;
 import org.web3j.abi.TypeReference;

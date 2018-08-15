@@ -1,12 +1,14 @@
-package com.example.leo.ethereumwallet;
+package com.example.leo.ethereumwallet.fragment;
 
 import android.Manifest;
-import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -27,9 +29,20 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.zxing.qrcode.encoder.QRCode;
+import com.example.leo.ethereumwallet.util.AccountsManager;
+import com.example.leo.ethereumwallet.R;
+import com.example.leo.ethereumwallet.adapter.AssetSideAccountAdapter;
+import com.example.leo.ethereumwallet.util.Utility;
+import com.example.leo.ethereumwallet.activity.CreateWalletActivity;
+import com.example.leo.ethereumwallet.activity.MakePaymentActivity;
+import com.example.leo.ethereumwallet.activity.ReceivePaymentActivity;
+import com.example.leo.ethereumwallet.activity.ScanQRActivity;
+import com.example.leo.ethereumwallet.asyncTask.AssetRefreshTask;
+import com.example.leo.ethereumwallet.gson.Account;
 
 import java.util.Locale;
+
+import cn.bingoogolapple.qrcode.core.BGAQRCodeUtil;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -38,12 +51,16 @@ import static android.app.Activity.RESULT_OK;
 
 public class AssetFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "AssetFragment";
-    protected DrawerLayout drawerLayout;
-    protected SwipeRefreshLayout swipeRefreshLayout;
+    public DrawerLayout drawerLayout;
+    public SwipeRefreshLayout swipeRefreshLayout;
+
 //    private Animation hideAnimation;
-    protected Button menuButton;
     private boolean firstTime;
     private Animation showAnimation;
+//    private AccountChangeReceiver accountChangeReceiver;
+    private IntentFilter intentFilter;
+
+    public Button menuButton;
     private RecyclerView recyclerView;
     private LinearLayout createAccountLayout;
     private LinearLayout scanQRLayout;
@@ -71,7 +88,15 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        firstTime = true;
+        AccountsManager.setCurAccountIndex(0);
+
+//        intentFilter = new IntentFilter();
+//        intentFilter.addAction(AccountsManager.ACCOUNTS_CHANGE_SIGNAL);
+//        accountChangeReceiver = new AccountChangeReceiver();
+
+        if (!AssetRefreshTask.refreshing) {
+            new AssetRefreshTask(this, true).execute();
+        }
     }
 
     @Override
@@ -89,10 +114,11 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
 
         menuButton = view.findViewById(R.id.asset_menu);
         menuButton.setOnClickListener(this);
+
         recyclerView = view.findViewById(R.id.asset_side_nav_accounts);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-        recyclerView.setAdapter(new SideAccountAdapter(this));
-        recyclerView.getAdapter().notifyDataSetChanged();
+        recyclerView.setAdapter(new AssetSideAccountAdapter(this));
+
         createAccountLayout = view.findViewById(R.id.asset_side_nav_create_account);
         createAccountLayout.setOnClickListener(this);
         scanQRLayout = view.findViewById(R.id.asset_side_nav_scanQR);
@@ -133,21 +159,69 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
                 }
             }
         });
-
+        refreshDisplay();
+        swipeRefreshLayout.setRefreshing(true);
 //        if (AccountsManager.getAccountSize() == 0){
 //            AccountsManager.loadAccounts(this.getActivity());
 //        }
-
-        if (AccountsManager.getAccountSize() > 0) {
-            if (!AssetRefreshTask.refreshing) {
-                AccountsManager.setCurAccountIndex(0);
-                refreshDisplay();
-                new AssetRefreshTask(this, true).execute();
-            }
-        } else {
-            Log.d(TAG, "onCreateView: Empty accounts list");
-        }
+//        Log.d(TAG, "onCreateView: lifecycleTest" + this.toString());
+//        if (AccountsManager.getAccountSize() > 0) {
+//            if (!AssetRefreshTask.refreshing) {
+//                AccountsManager.setCurAccountIndex(0);
+//                refreshDisplay();
+//                new AssetRefreshTask(this, true).execute();
+//            }
+//        } else {
+//            Log.d(TAG, "onCreateView: Empty accounts list");
+//        }
         return view;
+    }
+
+//    @Override
+//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+//        getActivity().registerReceiver(accountChangeReceiver, intentFilter);
+//    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: ");
+        recyclerView.getAdapter().notifyDataSetChanged();
+        if (!AssetRefreshTask.refreshing) {
+            refreshDisplay();
+            new AssetRefreshTask(this, false).execute();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+//        getActivity().unregisterReceiver(accountChangeReceiver);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.d(TAG, "onRequestPermissionsResult: " + requestCode);
+        if (requestCode == 1){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Intent intent = new Intent(this.getActivity(), ScanQRActivity.class);
+                startActivityForResult(intent, 1);
+            }else{
+                Toast.makeText(this.getActivity(), R.string.camera_permission_required, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case 1:
+                if (resultCode == RESULT_OK){
+                    MakePaymentActivity.actionStart(this.getActivity(), MakePaymentActivity.Token.ETH, data.getStringExtra("receiver_address"));
+                }
+                break;
+        }
     }
 
     @Override
@@ -160,7 +234,7 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
                     break;
                 case R.id.asset_receive_layout:
                     ReceivePaymentActivity.actionStart(AssetFragment.this.getActivity(),
-                            AccountsManager.getCurrentAccount().getAddress());
+                            AccountsManager.getCurAccount().getAddress());
                     break;
                 case R.id.asset_side_nav_create_account:
                     CreateWalletActivity.actionStart(this.getActivity());
@@ -177,6 +251,11 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
                     } else {
                         ethButtons.setVisibility(View.VISIBLE);
                         float ethButtonsHeight = ethButtons.getHeight();
+                        if (ethButtonsHeight == 0){
+//                            float scale = this.getActivity().getResources().getDisplayMetrics().density;
+//                            ethButtonsHeight = 48 * scale + 0.5f;
+                            ethButtonsHeight = BGAQRCodeUtil.dp2px(this.getActivity(), 48);
+                        }
                         Animation coordinateShowAnimation = new TranslateAnimation(0, 0, ethButtonsHeight * -1, 0);
                         coordinateShowAnimation.setDuration(200);
                         selfCoinContainer.startAnimation(coordinateShowAnimation);
@@ -210,21 +289,23 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
                     MakePaymentActivity.actionStart(this.getActivity(), MakePaymentActivity.Token.ETH);
                     break;
                 case R.id.asset_eth_receive_payment:
-                    Toast.makeText(this.getActivity(), "receive payment", Toast.LENGTH_SHORT).show();
+                    ReceivePaymentActivity.actionStart(AssetFragment.this.getActivity(),
+                            AccountsManager.getCurAccount().getAddress());
                     break;
                 case R.id.asset_selfCoin_make_payment:
                     MakePaymentActivity.actionStart(this.getActivity(), MakePaymentActivity.Token.BLOC);
                     break;
                 case R.id.asset_selfCoin_receive_payment:
-                    Toast.makeText(this.getActivity(), "BLOC receive payment", Toast.LENGTH_SHORT).show();
+                    ReceivePaymentActivity.actionStart(AssetFragment.this.getActivity(),
+                            AccountsManager.getCurAccount().getAddress());
                     break;
                 case R.id.asset_side_nav_scanQR:
                     if (ContextCompat.checkSelfPermission(this.getActivity(),
                             Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
                         requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
                     }else{
-                            Intent intent = new Intent(this.getActivity(), ScanQRActivity.class);
-                            startActivityForResult(intent, 1);
+                        Intent intent = new Intent(this.getActivity(), ScanQRActivity.class);
+                        startActivityForResult(intent, 1);
                     }
                     break;
                 default:
@@ -233,63 +314,39 @@ public class AssetFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart: ");
-        if (!firstTime && !AssetRefreshTask.refreshing) {
-            recyclerView.getAdapter().notifyDataSetChanged();
-            refreshDisplay();
-            new AssetRefreshTask(this, false).execute();
-        } else {
-            firstTime = false;
-        }
-    }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.d(TAG, "onRequestPermissionsResult: " + requestCode);
-        if (requestCode == 1){
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                Intent intent = new Intent(this.getActivity(), ScanQRActivity.class);
-                startActivityForResult(intent, 1);
-            }else{
-                Toast.makeText(this.getActivity(), R.string.camera_permission_required, Toast.LENGTH_SHORT).show();
+    public void refreshDisplay() {
+        Log.d(TAG, "refreshDisplay: " + this.toString());
+        if (swipeRefreshLayout != null) {
+            Account curAccount = AccountsManager.getCurAccount();
+            usernameView.setText(curAccount.getUsername());
+            String address = curAccount.getAddress();
+            if (address.length() == 42) {
+                String address_brief = address.substring(0, 10) + "..." + address.substring(32, 42);
+                addressView.setText(address_brief);
+            } else {
+                Toast.makeText(this.getActivity(), "The format of address is incorrect", Toast.LENGTH_SHORT).show();
             }
+
+            double realETH = curAccount.getEthereum().doubleValue() * Utility.getEth2cny();
+            double realselfCoin = curAccount.getSelfCoin().doubleValue() * 0.05;
+
+            realTotalView.setText(String.format(Locale.CHINA, "%.2f", realETH + realselfCoin));
+
+            ethView.setText(String.format(Locale.CHINA, "%.2f", curAccount.getEthereum().doubleValue()));
+            realETHView.setText(String.format(Locale.CHINA, "%.2f", realETH));
+            selfCoinView.setText(String.format(Locale.CHINA, "%.2f", curAccount.getSelfCoin()));
+            realSelfCoinView.setText(String.format(Locale.CHINA, "%.2f", realselfCoin));
+
+            swipeRefreshLayout.setRefreshing(false);
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode){
-            case 1:
-                if (resultCode == RESULT_OK){
-                    MakePaymentActivity.actionStart(this.getActivity(), MakePaymentActivity.Token.ETH, data.getStringExtra("receiver_address"));
-                }
-                break;
-        }
-    }
-
-    protected void refreshDisplay() {
-        Account curAccount = AccountsManager.getCurrentAccount();
-        usernameView.setText(curAccount.getUsername());
-        String address = curAccount.getAddress();
-        if (address.length() == 42) {
-            String address_brief = address.substring(0, 10) + "..." + address.substring(32, 42);
-            addressView.setText(address_brief);
-        } else {
-            Toast.makeText(this.getActivity(), "The format of address is incorrect", Toast.LENGTH_SHORT).show();
-        }
-
-        double realETH = curAccount.getEthereum() * Utility.getEth2cny();
-        double realselfCoin = curAccount.getSelfCoin() * 0.05;
-
-        realTotalView.setText(String.format(Locale.CHINA, "%.2f", realETH + realselfCoin));
-
-        ethView.setText(String.format(Locale.CHINA, "%.2f", curAccount.getEthereum()));
-        realETHView.setText(String.format(Locale.CHINA, "%.2f", realETH));
-        selfCoinView.setText(String.format(Locale.CHINA, "%.2f", curAccount.getSelfCoin()));
-        realSelfCoinView.setText(String.format(Locale.CHINA, "%.2f", realselfCoin));
-
-        swipeRefreshLayout.setRefreshing(false);
-    }
+//    public class AccountChangeReceiver extends BroadcastReceiver {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            if (recyclerView != null){
+//                recyclerView.getAdapter().notifyDataSetChanged();
+//            }
+//        }
+//    }
 }

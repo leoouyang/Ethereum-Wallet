@@ -5,37 +5,53 @@
     android:background="#fff"
     android:orientation="vertical">
 
-    <!--<RelativeLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="?android:attr/actionBarSize">-->
+    <RelativeLayout
+        android:layout_marginTop="25dp"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="#fff">
 
-        <!--<ImageView-->
-            <!--android:id="@+id/make_payment_return"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_alignParentLeft="true"-->
-            <!--android:background="?android:attr/selectableItemBackground"-->
-            <!--android:clickable="true"-->
-            <!--android:paddingLeft="10dp"-->
-            <!--android:src="@drawable/ic_back" />-->
+        <ImageView
+            android:id="@+id/toolbar_return"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:src="@drawable/ic_back"
+            android:contentDescription="toolbar return button"/>
 
-        <!--<TextView-->
-            <!--android:id="@+id/make_payment_title"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_centerInParent="true"-->
-            <!--android:textSize="20sp"-->
-            <!--android:textStyle="bold" />-->
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="1dp"-->
-            <!--android:layout_alignParentBottom="true"-->
-            <!--android:background="#d4d4d4" />-->
+        <ImageView
+            android:id="@+id/make_payment_scanQR"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:src="@drawable/ic_asset_scan"
+            android:contentDescription="toolbar scan button"/>
 
-    <!--</RelativeLayout>-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="#d4d4d4" />
 
-    <include layout = "@layout/toolbar"/>
+    </RelativeLayout>
 
     <EditText
         android:id="@+id/make_payment_address"
@@ -121,6 +137,7 @@
             android:layout_marginLeft="10dp"
             android:background="@color/colorPrimary"
             android:clickable="true"
+            android:focusable="true"
             android:minHeight="10dip"
             android:padding="7dp"
             android:text="@string/get_latest_gas_price"

@@ -1,4 +1,4 @@
-package com.example.leo.ethereumwallet;
+package com.example.leo.ethereumwallet.fragment;
 
 
 import android.annotation.SuppressLint;
@@ -15,6 +15,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.leo.ethereumwallet.util.AccountsManager;
+import com.example.leo.ethereumwallet.R;
+import com.example.leo.ethereumwallet.util.Utility;
+import com.example.leo.ethereumwallet.activity.MakePaymentActivity;
+
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
@@ -30,9 +35,9 @@ public class MakePaymentDialogFragment extends BottomSheetDialogFragment impleme
 
     private MakePaymentActivity.Token token;
     private String address;
-    private double gasPrice;
+    private String gasPrice;
     private int gasLimit;
-    private double value;
+    private String value;
     private boolean inProgress;
 
     private EditText passwordText;
@@ -43,15 +48,15 @@ public class MakePaymentDialogFragment extends BottomSheetDialogFragment impleme
         //d Required empty public constructor
     }
 
-    public static MakePaymentDialogFragment newInstance(MakePaymentActivity.Token token, String address, double gasPrice, int gasLimit, double value) {
+    public static MakePaymentDialogFragment newInstance(MakePaymentActivity.Token token, String address, String gasPrice, int gasLimit, String value) {
         MakePaymentDialogFragment makePaymentDialogFragment = new MakePaymentDialogFragment();
 
         Bundle args = new Bundle();
         args.putSerializable("token", token);
         args.putString("address", address);
-        args.putDouble("gasPrice", gasPrice);
+        args.putString("gasPrice", gasPrice);
         args.putInt("gasLimit", gasLimit);
-        args.putDouble("value", value);
+        args.putString("value", value);
         makePaymentDialogFragment.setArguments(args);
 
         return makePaymentDialogFragment;
@@ -63,9 +68,9 @@ public class MakePaymentDialogFragment extends BottomSheetDialogFragment impleme
 
         token = (MakePaymentActivity.Token) getArguments().getSerializable("token");
         address = getArguments().getString("address");
-        gasPrice = getArguments().getDouble("gasPrice");
+        gasPrice = getArguments().getString("gasPrice");
         gasLimit = getArguments().getInt("gasLimit");
-        value = getArguments().getDouble("value");
+        value = getArguments().getString("value");
 
         inProgress = false;
         setCancelable(false);
@@ -94,16 +99,16 @@ public class MakePaymentDialogFragment extends BottomSheetDialogFragment impleme
         TextView toAddress = view.findViewById(R.id.make_payment_dialog_toAddress);
         toAddress.setText(address);
         TextView fromAddress = view.findViewById(R.id.make_payment_dialog_fromAddress);
-        fromAddress.setText(AccountsManager.getCurrentAccount().getAddress());
+        fromAddress.setText(AccountsManager.getCurAccount().getAddress());
         TextView minerFee = view.findViewById(R.id.make_payment_dialog_minerFee);
-        minerFee.setText(String.format(Locale.CHINA, "%f ETH = %.2f (gas price) * %d (gas limit)", gasLimit * gasPrice * Math.pow(10, -9), gasPrice, gasLimit));
+        minerFee.setText(String.format(Locale.CHINA, "%f ETH = %s (gas price) * %d (gas limit)", gasLimit * Double.parseDouble(gasPrice) * Math.pow(10, -9), gasPrice, gasLimit));
         TextView valueText = view.findViewById(R.id.make_payment_dialog_value);
         switch (token) {
             case ETH:
-                valueText.setText(String.format(Locale.CHINA, "%f ETH", value));
+                valueText.setText(String.format(Locale.CHINA, "%s ETH", value));
                 break;
             case BLOC:
-                valueText.setText(String.format(Locale.CHINA, "%f BLOC", value));
+                valueText.setText(String.format(Locale.CHINA, "%s BLOC", value));
                 break;
         }
 //        valueText.setText(String.format(Locale.CHINA, "%f",value));
@@ -147,7 +152,7 @@ public class MakePaymentDialogFragment extends BottomSheetDialogFragment impleme
             @Override
             protected Integer doInBackground(Void... voids) {
                 int status = 2;
-                String keystoreLocation = Utility.getWalletdirectory(getActivity()) + "/" + AccountsManager.getCurrentAccount().getKeystore();
+                String keystoreLocation = Utility.getWalletdirectory(getActivity()) + "/" + AccountsManager.getCurAccount().getKeystore();
                 try {
                     Credentials credentials = WalletUtils.loadCredentials(password, keystoreLocation);
                     Log.d(TAG, "doInBackground: " + token);

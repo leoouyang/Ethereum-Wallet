@@ -1,4 +1,4 @@
-package com.example.leo.ethereumwallet;
+package com.example.leo.ethereumwallet.adapter;
 
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -9,14 +9,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.leo.ethereumwallet.util.AccountsManager;
+import com.example.leo.ethereumwallet.R;
+import com.example.leo.ethereumwallet.asyncTask.AssetRefreshTask;
+import com.example.leo.ethereumwallet.fragment.AssetFragment;
+import com.example.leo.ethereumwallet.gson.Account;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class SideAccountAdapter extends RecyclerView.Adapter {
-    private static final String TAG = "SideAccountAdapter";
+public class AssetSideAccountAdapter extends RecyclerView.Adapter {
+    private static final String TAG = "AssetSideAccountAdapter";
     private AssetFragment assetFragment;
     private int prevIndex = 0;
 
-    public SideAccountAdapter(AssetFragment assetFragment) {
+    public AssetSideAccountAdapter(AssetFragment assetFragment) {
         this.assetFragment = assetFragment;
     }
 
@@ -35,7 +41,7 @@ public class SideAccountAdapter extends RecyclerView.Adapter {
                     prevIndex = curIndex;
                     notifyItemChanged(curIndex);
                     assetFragment.refreshDisplay();
-                    new AssetRefreshTask(assetFragment, true).execute();
+                    new AssetRefreshTask(assetFragment, false).execute();
                 }
             }
         });
@@ -46,7 +52,7 @@ public class SideAccountAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: bind position " + position);
         Account account = AccountsManager.getAccountAtIndex(position);
-        ((ViewHolder) holder).profilePicture.setImageResource(R.drawable.empty_profile_public);
+        ((ViewHolder) holder).profilePicture.setImageResource(R.drawable.js_components_images_walletavatar);
         ((ViewHolder) holder).username.setText(account.getUsername());
         if (position == AccountsManager.getCurAccountIndex()) {
             prevIndex = position;

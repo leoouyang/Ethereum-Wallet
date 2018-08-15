@@ -1,5 +1,8 @@
-package com.example.leo.ethereumwallet;
+package com.example.leo.ethereumwallet.activity;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +18,13 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.example.leo.ethereumwallet.util.AccountsManager;
+import com.example.leo.ethereumwallet.fragment.AssetFragment;
+import com.example.leo.ethereumwallet.fragment.MeFragment;
+import com.example.leo.ethereumwallet.fragment.PriceFragment;
+import com.example.leo.ethereumwallet.R;
+import com.example.leo.ethereumwallet.util.Utility;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
@@ -26,6 +36,11 @@ public class MainActivity extends AppCompatActivity {
     private PriceFragment priceFragment;
     private MeFragment meFragment;
 
+    public static void actionStart(Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
+        context.startActivity(intent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                //todo use view pager?
                 FragmentManager fragmentManager = MainActivity.this.getSupportFragmentManager();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 switch (item.getItemId()) {
@@ -86,17 +102,26 @@ public class MainActivity extends AppCompatActivity {
 //        AccountsManager.loadAccounts(this);
         Utility.loadExchangeRates(this);
         initFragment();
+        //todo register receivers
     }
 
     private void initFragment() {
-        priceFragment = new PriceFragment();
-        assetFragment = new AssetFragment();
-        meFragment = new MeFragment();
         FragmentManager fragmentManager = MainActivity.this.getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
+//
+//        transaction.remove(assetFragment);
+//        assetFragment = null;
+//        transaction.remove(priceFragment);
+//        priceFragment = null;
+//        transaction.remove(meFragment);
+//        meFragment = null;
+
+        assetFragment = new AssetFragment();
         transaction.add(R.id.main_view, assetFragment);
+        priceFragment = new PriceFragment();
         transaction.add(R.id.main_view, priceFragment);
         transaction.hide(priceFragment);
+        meFragment = new MeFragment();
         transaction.add(R.id.main_view, meFragment);
         transaction.hide(meFragment);
         transaction.commit();
@@ -120,15 +145,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        super.onStop();
         AccountsManager.saveAccounts(this);
         Utility.saveExchangeRates(this);
+        super.onStop();
     }
 
-//    @Override
-//    protected void onDestroy() {
-//        Utility.web3.shutdown();
-//        AccountsManager.saveAccounts(this);
-//        super.onDestroy();
-//    }
+    @Override
+    protected void onDestroy() {
+        //todo unregister receiver
+        super.onDestroy();
+    }
 }

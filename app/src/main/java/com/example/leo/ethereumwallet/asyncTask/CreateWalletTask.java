@@ -1,10 +1,15 @@
-package com.example.leo.ethereumwallet;
+package com.example.leo.ethereumwallet.asyncTask;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.example.leo.ethereumwallet.util.AccountsManager;
+import com.example.leo.ethereumwallet.R;
+import com.example.leo.ethereumwallet.util.Utility;
+import com.example.leo.ethereumwallet.gson.Account;
 
 import java.lang.ref.WeakReference;
 

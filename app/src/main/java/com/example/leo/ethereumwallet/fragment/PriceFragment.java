@@ -1,4 +1,4 @@
-package com.example.leo.ethereumwallet;
+package com.example.leo.ethereumwallet.fragment;
 
 
 import android.content.BroadcastReceiver;
@@ -14,6 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.leo.ethereumwallet.R;
+import com.example.leo.ethereumwallet.util.Utility;
 
 
 /**
@@ -40,6 +44,10 @@ public class PriceFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         super.onCreate(savedInstanceState);
         prev_eth2cny = Utility.getEth2cny();
         prev_eth2usd = Utility.getEth2usd();
+
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(Utility.REFRESH_PRICE_SIGNAL);
+        priceRefreshReceiver = new PriceRefreshReceiver();
     }
 
     @Override
@@ -54,25 +62,45 @@ public class PriceFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         ethStatusImage = view.findViewById(R.id.price_eth_status_image);
 
         refreshLayout.setOnRefreshListener(this);
+        refreshDisplay();
         return view;
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        intentFilter = new IntentFilter();
-        intentFilter.addAction(Utility.REFRESH_PRICE_SIGNAL);
-        priceRefreshReceiver = new PriceRefreshReceiver();
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         this.getActivity().registerReceiver(priceRefreshReceiver, intentFilter);
     }
 
+    //    @Override
+//    public void onResume() {
+//        super.onResume();
+//        intentFilter = new IntentFilter();
+//        intentFilter.addAction(Utility.REFRESH_PRICE_SIGNAL);
+//        priceRefreshReceiver = new PriceRefreshReceiver();
+//        this.getActivity().registerReceiver(priceRefreshReceiver, intentFilter);
+//    }
+
+
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onDestroy() {
         this.getActivity().unregisterReceiver(priceRefreshReceiver);
+        super.onDestroy();
     }
 
 //    @Override
+//    public void onDestroyView() {
+//        this.getActivity().unregisterReceiver(priceRefreshReceiver);
+//        super.onDestroyView();
+//    }
+
+    //    @Override
+//    public void onPause() {
+//        super.onPause();
+//        this.getActivity().unregisterReceiver(priceRefreshReceiver);
+//    }
+
+    //    @Override
 //    public void onHiddenChanged(boolean hidden) {
 //        super.onHiddenChanged(hidden);
 ////        if (!hidden){
@@ -81,7 +109,7 @@ public class PriceFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 ////        }
 //    }
 
-    private void refreshDisplay() {
+    public void refreshDisplay() {
         eth2cnyTextView.setText(String.valueOf(Utility.getEth2cny()));
         eth2usdTextView.setText(String.valueOf(Utility.getEth2usd()));
         if (Utility.getEth2usd() > prev_eth2usd) {
@@ -103,26 +131,17 @@ public class PriceFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 Utility.getEtherExchangeRate(PriceFragment.this.getActivity());
             }
         }).start();
-//        new AsyncTask<Void,Void,Void>(){
-//            @Override
-//            protected Void doInBackground(Void... voids) {
-//                Utility.getEtherExchangeRate();
-//                return null;
-//            }
-//
-//            @Override
-//            protected void onPostExecute(Void aVoid) {
-//                super.onPostExecute(aVoid);
-//                refreshDisplay();
-//                refreshLayout.setRefreshing(false);
-//            }
-//        }.execute();
     }
 
     class PriceRefreshReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            refreshDisplay();
+            boolean status = intent.getBooleanExtra("status", false);
+            if (status){
+                refreshDisplay();
+            }else{
+                Toast.makeText(PriceFragment.this.getActivity(), R.string.exchange_refresh_failed, Toast.LENGTH_SHORT).show();
+            }
             if (refreshLayout.isRefreshing()) {
                 refreshLayout.setRefreshing(false);
             }

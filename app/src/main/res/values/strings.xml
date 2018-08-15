@@ -87,6 +87,8 @@
 
     <string name="empty_field_exists">有空没填</string>
 
+    <string name="only_dot_invalid_input">.不是有效输入</string>
+
     <string name="insufficient_fund">余额不足</string>
 
     <string name="account_balance">余额</string>
@@ -107,4 +109,41 @@
 
     <string name="camera_permission_required">需要相机权限以继续</string>
 
+    <string name="exchange_refresh_failed">汇率更新失败</string>
+
+    <string name="balance_refresh_failed">账户更新失败</string>
+
+    <string name="address_qr_code">收款码</string>
+
+    <string name="copy_address">复制收款地址</string>
+
+    <string name="generate_qr_failed">生成二维码失败</string>
+
+    <string name="copied">已复制</string>
+
+    <string name="manage_wallet">管理钱包</string>
+
+    <string name="transaction_history">交易历史</string>
+
+    <string name="plus">+</string>
+
+    <string name="minus">-</string>
+
+    <string name="no_more_transact_hist">没有更多的历史记录了</string>
+
+    <string name="transact_hist_refreshed">已更新交易历史记录</string>
+
+    <string name="loading">正在加载&#8230;</string>
+
+    <string name="transaction_record">交集记录</string>
+
+    <string name="sender">发款方</string>
+
+    <string name="receiver">收款方</string>
+
+    <string name="transaction_id">交易号</string>
+    
+    <string name="block_number">区块编号</string>
+
+    <string name="transaction_time">交易时间</string>
 </resources>

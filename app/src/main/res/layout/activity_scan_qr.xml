@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ScanQRActivity">
+    tools:context=".activity.ScanQRActivity">
 
     <cn.bingoogolapple.qrcode.zxing.ZXingView
         android:id="@+id/zxingview"
@@ -23,5 +23,5 @@
         app:qrcv_topOffset="120dp"/>
 
     <include layout = "@layout/toolbar"/>
-
+    
 </RelativeLayout>

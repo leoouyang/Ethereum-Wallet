@@ -3,39 +3,39 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <include layout = "@layout/toolbar"
-        android:id="@+id/make_payment_dialog_actionBar"/>
-    <!--<RelativeLayout-->
-        <!--android:id="@+id/make_payment_dialog_actionBar"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="?android:attr/actionBarSize">-->
+    <RelativeLayout
+        android:id="@+id/make_payment_dialog_actionBar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize">
 
-        <!--<ImageView-->
-            <!--android:id="@+id/make_payment_dialog_return"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_alignParentLeft="true"-->
-            <!--android:background="?android:attr/selectableItemBackground"-->
-            <!--android:clickable="true"-->
-            <!--android:paddingLeft="10dp"-->
-            <!--android:paddingRight="10dp"-->
-            <!--android:src="@drawable/ic_back" />-->
+        <ImageView
+            android:id="@+id/toolbar_return"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:src="@drawable/ic_back"
+            android:contentDescription="toolbar return button"/>
 
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_centerInParent="true"-->
-            <!--android:text="@string/payment_detail"-->
-            <!--android:textSize="20sp"-->
-            <!--android:textStyle="bold" />-->
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
-        <!--<View-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="1dp"-->
-            <!--android:layout_alignParentBottom="true"-->
-            <!--android:background="#d4d4d4" />-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="#d4d4d4" />
 
-    <!--</RelativeLayout>-->
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/make_payment_dialog_main"
